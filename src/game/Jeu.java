@@ -1,5 +1,9 @@
 package game;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -73,6 +77,7 @@ public abstract class Jeu {
         menuText.addText("1. Charger un profil de joueur existant ?", "Principal1", 250, 280);
         menuText.addText("2. Créer un nouveau joueur ?", "Principal2", 250, 260);
         menuText.addText("3. Sortir du jeu ?", "Principal3", 250, 240);
+        menuText.addText("4. Supprimer un profil ?", "Principal4", 250, 220);
 
         //Textes
         menuText.addText("Entrez un niveau entre 1 et 5: ", "niveau", 200, 300);
@@ -186,14 +191,18 @@ public abstract class Jeu {
                     String mot = dico.getMotDepuisListeNiveaux(niveau);
                     //FIN DICO 
 
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate date = LocalDate.now();
                     // crée un nouvelle partie
-                    partie = new Partie("2020-11-21", mot, niveau);
+                    partie = new Partie(formatter.format(date), mot, niveau);
          
         
                     // joue
                     joue(partie);
                     // enregistre la partie dans le profil --> enregistre le profil
                     // .......... profil.******
+                    //profil.ajouterPartie(partie);
+                    // profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
                     playTheGame = MENU_VAL.MENU_JOUE;
                     break;
 
@@ -201,7 +210,8 @@ public abstract class Jeu {
                 // Touche 2 : Charger une partie existante
                 // -----------------------------------------                
                 case Keyboard.KEY_2: // charge une partie existante
-                    partie = new Partie("2018-09-7", "test", 1); //XXXXXXXXX
+                //affichier liste des parties
+                    partie = new Partie("07/09/2020", "test", 1); //XXXXXXXXX
                     // Recupère le mot de la partie existante
                     // ..........
                     // joue
@@ -253,12 +263,36 @@ public abstract class Jeu {
             check=true;
         }
         else{
+            System.out.println("Le profil n'existe pas");
+        }
+        return check;
+    }
+
+    private boolean checkProfil(String nom){
+        boolean check=false;
+        File fichierProfil = new File("Data/xml/"+nom+".xml");
+        if(!fichierProfil.exists()){
+            profil= new Profil(nom, "04/10/1998");
+            check=true;
+        }
+        else{
             System.out.println("Le profil existe déjà");
         }
         return check;
     }
 
-
+    private boolean deleteProfil(String nom){
+        boolean check=false;
+        File fichierProfil = new File("Data/xml/"+nom+".xml");
+        if(fichierProfil.exists()){
+            fichierProfil.delete();
+            check=true;
+        }
+        else{
+            System.out.println("Le profil existe déjà");
+        }
+        return check;
+    }
 
     private MENU_VAL menuPrincipal() {
 
@@ -272,11 +306,12 @@ public abstract class Jeu {
         menuText.getText("Principal1").display();
         menuText.getText("Principal2").display();
         menuText.getText("Principal3").display();
+        menuText.getText("Principal4").display();
                
         // vérifie qu'une touche 1, 2 ou 3 est pressée
         int touche = 0;
         
-        while (!(touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3 || touche == Keyboard.KEY_NUMPAD1 || touche ==  Keyboard.KEY_NUMPAD2 || touche ==  Keyboard.KEY_NUMPAD3)) {
+        while (!(touche == Keyboard.KEY_4 || touche == Keyboard.KEY_NUMPAD4 ||touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3 || touche == Keyboard.KEY_NUMPAD1 || touche ==  Keyboard.KEY_NUMPAD2 || touche ==  Keyboard.KEY_NUMPAD3)) {
             touche = env.getKey();
             env.advanceOneFrame();
         }
@@ -286,6 +321,8 @@ public abstract class Jeu {
         menuText.getText("Principal1").clean();
         menuText.getText("Principal2").clean();
         menuText.getText("Principal3").clean();
+        menuText.getText("Principal4").clean();
+
 
         touche=checkNumpad(touche); //prise en compte du pavé numerique
         // et décide quoi faire en fonction de la touche pressée
@@ -313,8 +350,13 @@ public abstract class Jeu {
                  nomJoueur = getNomJoueur();
                 // // crée un profil avec le nom d'un nouveau joueur
                 // profil = new Profil(nomJoueur);
-                profil = new Profil(nomJoueur,"04-10-1998");
-                choix = menuJeu();
+                if(checkProfil(nomJoueur)){
+                    choix=menuJeu();
+                }
+                else{
+                    choix = MENU_VAL.MENU_CONTINUE;//CONTINUE;
+                }
+                // profil = new Profil(nomJoueur,"04-10-1998");
                 break;
 
             // -------------------------------------
@@ -322,6 +364,16 @@ public abstract class Jeu {
             // -------------------------------------
             case Keyboard.KEY_3:
                 choix = MENU_VAL.MENU_SORTIE;
+            
+            case Keyboard.KEY_4:
+                nomJoueur=getNomJoueur();
+                if(deleteProfil(nomJoueur)){
+                    System.out.println("Profil supprimé");
+                }
+                else{
+                    System.out.println("profil n'existe pas");
+                }
+                choix = MENU_VAL.MENU_CONTINUE;
         }
         return choix;
     }
@@ -376,7 +428,8 @@ public abstract class Jeu {
 
         // Ici on peut calculer des valeurs lorsque la partie est terminée
         terminePartie(partie);
-
+        profil.ajouterPartie(partie);
+        profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
     }
 
     protected abstract void démarrePartie(Partie partie);

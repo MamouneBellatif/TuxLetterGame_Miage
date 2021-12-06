@@ -73,10 +73,10 @@ public class JeuDevineLeMotOrdre extends Jeu {
         else {
             System.out.println("perdu!");
         }
-        int pourcentage =(lettres.size()-nbLettresRestantes)/lettres.size()*100;
+        // int pourcentage =(lettres.size()-nbLettresRestantes)/lettres.size()*100;
         System.out.println("restantes");
-        partie.setTrouve(pourcentage);
-        System.out.println("Trouvé: "+pourcentage+"% en "+getTemps()+" secondes");
+        partie.setTrouve(nbLettresRestantes);
+        System.out.println("Trouvé: "+partie.getTrouve()+"% en "+getTemps()+" secondes");
         removeLetters();
     }
 

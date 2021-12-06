@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import game.XMLUtil.DocumentTransform;
+
 public class Profil {
     
     private String nom;
@@ -25,10 +27,62 @@ public class Profil {
     }
 
     public Profil(String nom,String dateNaissance){
+        // _doc = new Document();
         this.nom=nom;
         this.dateNaissance=dateNaissance;
+        this.avatar="";
+        parties = new ArrayList<Partie>();
+
+        
+
+        
+       createXmlProfil();
+        
+        //creere nouveau profil xml
     }
 
+    private void createXmlProfil(){
+        try{
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            _doc = db.newDocument();
+
+            //racine et espaces de nom
+            Element profilElt = _doc.createElement("profil");
+            profilElt.setAttribute("xmlns", "http://myGame/tux");
+            profilElt.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            profilElt.setAttribute("xsi:schemaLocation", "http://myGame/tux xsd/profil.xsd");
+            _doc.appendChild(profilElt);
+            
+            //nom
+            Element nomElt=_doc.createElement("nom");
+            Text nomTxt=_doc.createTextNode(nom);
+            nomElt.appendChild(nomTxt);
+            profilElt.appendChild(nomElt);
+            
+            //avatat
+            Element avatarElt=_doc.createElement("avatar");
+            Text avatarTxt=_doc.createTextNode(avatar);
+            avatarElt.appendChild(avatarTxt);
+            profilElt.appendChild(avatarElt);
+            
+            //date
+            Element dateElt=_doc.createElement("anniversaire");
+            Text dateTxt=_doc.createTextNode(profileDateToXmlDate(dateNaissance));
+            dateElt.appendChild(dateTxt);
+            profilElt.appendChild(dateElt);
+            
+            Element partiesElt=_doc.createElement("parties");
+            profilElt.appendChild(partiesElt);
+            
+            // DocumentTransform.writeDoc(_doc, "Data/xml/"+nom+".xml");
+            sauvegarder("Data/xml/"+nom+".xml");
+            System.out.println("Nouveau profil créé!");
+        }
+        catch (Exception e){
+            System.out.println("Erreur creation profil: "+e);
+        }
+    }
  // Cree un DOM à partir d'un fichier XML
 //     public Profil(String nomFichier) {
 //     //TMP
@@ -36,22 +90,37 @@ public class Profil {
 //      this.dateNaissance="04-10-1998";
 //  }
     public Profil(String nomFichier) {
-       //TMP
-        this.nom="mamoune";
-        this.dateNaissance="04-10-1998";
-        //TMP
-        // _doc = fromXML("Data/xml/"+nomFichier+".xml");
+       
+         _doc = fromXML(nomFichier);
 
-        // _doc = fromXML(nomFichier);
-        // parsing à compléter
-        // ?!#?!
+        //racine
+        Element profilElt = _doc.getDocumentElement();
+
+        //recuperation des attributs
+        String nom=profilElt.getElementsByTagName("nom").item(0).getTextContent();
+        String avatar=profilElt.getElementsByTagName("avatar").item(0).getTextContent();
+        String dateNaissanceXML=profilElt.getElementsByTagName("anniversaire").item(0).getTextContent();
+
+        this.nom=nom;
+        this.avatar=avatar;
+        this.dateNaissance=xmlDateToProfileDate(dateNaissanceXML); //on convertie la date au bon format
+
+        System.out.println("Initialisation profil: nom="+nom+" avatar="+avatar+" date="+dateNaissance);
+
+        parties= new ArrayList<Partie>();
+        NodeList partieList = profilElt.getElementsByTagName("partie");
+        for (int i = 0; i < partieList.getLength(); i++) { //on parcours la liste des parties
+            Element partieElt =(Element) partieList.item(i); //on recupere l'element de la partie
+            Partie partie = new Partie(partieElt);
+            parties.add(partie);
+            System.out.println("Partie initialisée: "+partie);
+        }
+
     }
-    // public Profil(String nom, String avatar, String anniversaire, ArrayList<Partie> parties) {
-    //     this.nom = nom;
-    //     this.avatar = avatar;
-    //     this.annx²iversaire = anniversaire;
-    //     this.parties = parties;
-    // }
+
+   public String getNom(){
+       return this.nom;
+   }
 
     public ArrayList<Partie> getParties(){
         return parties;
@@ -59,9 +128,15 @@ public class Profil {
 
     public void ajouterPartie(Partie p){
         parties.add(p);
+        Element partieElt=p.getPartie(_doc);
+        Element partiesElt= (Element) _doc.getElementsByTagName("parties").item(0);
+        partiesElt.appendChild(partieElt);
     }
     
-
+    public void sauvegarder(String filename){
+        // System.out.println("Sauvegarde dans"+filename);
+        toXML(filename);
+    }
    
 
     // Cree un DOM à partir d'un fichier XML

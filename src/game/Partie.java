@@ -19,19 +19,25 @@ public class Partie {
     
     public Partie(Element partieElt){
         //On recupere les elemnts néceissaires et on extrait la valeure
-        String mot=partieElt.getElementsByTagName("nom").item(0).getTextContent();
-        String temps=partieElt.getElementsByTagName("temps").item(0).getTextContent();
+        Element motElt =(Element) partieElt.getElementsByTagName("mot").item(0);
+        Element tempsElt = (Element) partieElt.getElementsByTagName("temps").item(0);
+
+        String mot=motElt.getTextContent();
+        String temps=tempsElt.getTextContent();
         String date=partieElt.getAttribute("date");
-        String niveauString=partieElt.getAttributeNode("niveau").getTextContent();
 
+        String niveauString=motElt.getAttributeNode("niveau").getTextContent();
 
+        //initaliser trouvé ?
         int niveau=Integer.parseInt(niveauString);
         
        
         this.mot=mot;
         this.temps=(int) Double.parseDouble(temps);
-        this.date=date;
+        this.date=Profil.xmlDateToProfileDate(date);
         this.niveau=niveau;
+
+        
     }
 
     public Element getPartie(Document doc){
@@ -39,7 +45,8 @@ public class Partie {
         Element partieElt = doc.createElement("partie");
 
         //attribut date
-        partieElt.setAttribute("date",this.date);
+        String date=Profil.profileDateToXmlDate(this.date);
+        partieElt.setAttribute("date",date);
 
         //attribut trouvé (nécessaire ?)
         partieElt.setAttribute("trouvé", String.valueOf(this.trouvé));
@@ -52,7 +59,7 @@ public class Partie {
         //element mot et attribut niveau
         Element motElt = doc.createElement("mot");
         Text motTxt= doc.createTextNode(String.valueOf(this.mot));
-        motElt.setAttribute("niveau", this.mot);
+        motElt.setAttribute("niveau", String.valueOf(this.niveau));
         motElt.appendChild(motTxt);
 
         //on ajoute les element au doc
@@ -68,9 +75,16 @@ public class Partie {
     }
     public void setTrouve(int nbLettresRestantes){
         // trouvé=mot.length()-nbLettresRestantes;
-        trouvé=(mot.length()-nbLettresRestantes)/mot.length()*100;
+        System.out.println("longeur: "+mot.length());
+        System.out.println("restant: "+nbLettresRestantes);
+        double pourcentage = (mot.length()-nbLettresRestantes)/mot.length()*100;
+        System.out.println("pourc: "+pourcentage);
+        trouvé=(int) pourcentage;
     }
 
+    public int getTrouve(){
+        return trouvé;
+    }
     public void setTemps(int temps){
         this.temps=temps;
     }
