@@ -82,6 +82,9 @@ public abstract class Jeu {
         //Textes
         menuText.addText("Entrez un niveau entre 1 et 5: ", "niveau", 200, 300);
         menuText.addText("Erreur. Entrez un niveau entre 1 et 5: ", "erreurNiveau", 200, 300);
+        
+        menuText.addText("Choissiez l'indice de la partie souhaitée: ", "index", 200, 300);
+        menuText.addText("Erreur. Choissiez l'indice de la partie souhaitée: ", "indexErreur", 200, 300);
 
         //intancie les lettres
         lettres = new ArrayList<>();
@@ -144,6 +147,46 @@ public abstract class Jeu {
         return niveau;
     }
 
+    private int getIndex(int max) throws NumberFormatException{
+        int index=0;
+        String message ="index";
+        String input="";
+        Boolean success=false;
+        do{
+            try {
+                index=Integer.parseInt(lireTexte(message));
+                success=true;
+            }
+            catch (NumberFormatException e){
+                message="indexErreur";
+                success=false;
+            }
+            
+        // } while((niveau<1 || niveau >5) && !success);
+        } while(index<0 || index >max || !success);
+        return index;
+    
+    }
+//a
+    public int afficheParties(){
+
+        //alterntive si pas de place, pages ou naviguer entre partie
+        int nbParties = profil.getParties().size();
+        
+        for (Partie partie : profil.getParties()) {
+            //index * constante / taille
+            int index =profil.getParties().indexOf(partie);
+            menuText.addText(index+"."+partie.toString(), "partie"+index,200, 80+(index*200)/nbParties);
+            menuText.getText("partie"+index).display();
+        }
+
+        int choixPartie = getIndex(nbParties-1);
+
+        for (int i = 0; i < nbParties; i++) {
+            menuText.getText("partie"+i).clean();
+        }
+        return choixPartie;
+    }
     
     // fourni, à compléter
     private MENU_VAL menuJeu() {
@@ -201,8 +244,8 @@ public abstract class Jeu {
                     joue(partie);
                     // enregistre la partie dans le profil --> enregistre le profil
                     // .......... profil.******
-                    //profil.ajouterPartie(partie);
-                    // profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
+                    profil.ajouterPartie(partie);
+                    profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
                     playTheGame = MENU_VAL.MENU_JOUE;
                     break;
 
@@ -211,14 +254,23 @@ public abstract class Jeu {
                 // -----------------------------------------                
                 case Keyboard.KEY_2: // charge une partie existante
                 //affichier liste des parties
-                    partie = new Partie("07/09/2020", "test", 1); //XXXXXXXXX
+                    int partieIndex= afficheParties();
+                    partie = profil.getParties().get(partieIndex);
+                    joue(partie);
+                    // profil.ajouterPartie(partie);
+                    profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
+                    playTheGame = MENU_VAL.MENU_JOUE;
+                    //profil.ajouterPartie(partie);
+                    // profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
+                    // profil.sauvegarder(filename);
+                    // partie = new Partie("07/09/2020", "test", 1); //XXXXXXXXX
                     // Recupère le mot de la partie existante
                     // ..........
                     // joue
-                    joue(partie);
+                    // joue(partie);
                     // enregistre la partie dans le profil --> enregistre le profil
                     // .......... profil.******
-                    playTheGame = MENU_VAL.MENU_JOUE;
+                    // playTheGame = MENU_VAL.MENU_CONTINUE; //temporaire
                     break;
 
                 // -----------------------------------------
@@ -378,15 +430,26 @@ public abstract class Jeu {
         return choix;
     }
 
-    private void aperçuMot(String mot){
-        Chronomètre chrono = new Chronomètre(5000);
-        menuText.addText(mot, "mot", 200, 300);
-        menuText.getText("mot").display();
-        chrono.start();
-        while(chrono.remainsTime());
-        chrono.stop();
-        menuText.getText("mot").clean();
+    public void wordPeek(String mot){
+        Chronomètre chronoPeek=new Chronomètre(5000);
+        chronoPeek.start();
+        menuText.addText("Mot: "+mot, "peek", 200, 300);
+        menuText.addText(chronoPeek.getRemaining()+" secondes", "chrono", 200, 280);
+        menuText.getText("peek").display();
+        menuText.getText("chrono").display();
+
+        while(chronoPeek.remainsTime()){
+            env.advanceOneFrame();
+            menuText.getText("chrono").modifyTextAndDisplay(chronoPeek.getRemaining()+" secondes");
+        }
+        chronoPeek.stop();
+        menuText.getText("peek").clean();
+        menuText.getText("peek").destroy();
+        menuText.getText("chrono").clean();
+        menuText.getText("chrono").destroy();
     }
+
+   
     public void joue(Partie partie) {
 
         // Instancie un Tux
@@ -397,9 +460,7 @@ public abstract class Jeu {
         env.addObject(montagne);
         
         //affichage 5 sec
-        // aperçuMot(partie.getMot());
-        // menuText.addText(partie.getMot(), "niveau", 200, 300);
-        // Thread.sleep(5000);
+        wordPeek(partie.getMot());
 
         // Ici, on peut ini     tialiser des valeurs pour une nouvelle partie
         démarrePartie(partie);
@@ -428,8 +489,8 @@ public abstract class Jeu {
 
         // Ici on peut calculer des valeurs lorsque la partie est terminée
         terminePartie(partie);
-        profil.ajouterPartie(partie);
-        profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
+        // profil.ajouterPartie(partie);
+        // profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
     }
 
     protected abstract void démarrePartie(Partie partie);

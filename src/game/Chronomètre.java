@@ -21,7 +21,8 @@ public class Chronomètre {
     }
  
     public void stop(){
-        end = current;
+        end = System.currentTimeMillis();
+        // end = current;
     }
  
     public long getTime() {
@@ -55,8 +56,8 @@ public class Chronomètre {
         current = System.currentTimeMillis();
         int timeSpent;
         timeSpent = (int) ((current - begin)/1000.0);
-        // System.out.println(timeSpent);
-        return timeSpent < limite;
+        //  System.out.println("time spent:"+timeSpent+"< limite: "+limite );
+        return (timeSpent*1000) < limite;
     }
      
 }

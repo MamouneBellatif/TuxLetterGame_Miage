@@ -77,7 +77,7 @@ public class Partie {
         // trouvé=mot.length()-nbLettresRestantes;
         System.out.println("longeur: "+mot.length());
         System.out.println("restant: "+nbLettresRestantes);
-        double pourcentage = (mot.length()-nbLettresRestantes)/mot.length()*100;
+        double pourcentage = ((double) mot.length()- (double) nbLettresRestantes)/ (double) mot.length()*100;
         System.out.println("pourc: "+pourcentage);
         trouvé=(int) pourcentage;
     }
