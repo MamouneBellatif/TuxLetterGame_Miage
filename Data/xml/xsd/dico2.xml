@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<dictionnaire
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xmlns='http://myGame/tux'
+    xsi:schemaLocation='http://myGame/tux dico.xsd'>
+    <mot niveau="1">ORDINATEUR</mot>
+    <mot niveau="5">PROCESSEUR</mot>
+    <mot niveau="3">MEMOIRE</mot>
+    <mot niveau="2">ADRESSE</mot>
+    <mot niveau="3">NOYAU</mot>
+
+</dictionnaire>

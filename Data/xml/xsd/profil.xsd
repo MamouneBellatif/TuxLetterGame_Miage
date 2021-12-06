@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<xs:schema version="1.0"
+           targetNamespace="http://myGame/tux"
+           xmlns:tux="http://myGame/tux"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+           <xs:include schemaLocation="dico.xsd"></xs:include>
+
+           <xs:element name="profil" type="tux:Profil"/>
+
+           <!-- Definition type Profil (racine)-->
+           <xs:complexType name="Profil"> 
+               <xs:sequence>
+                   <xs:element name="nom" type="xs:string"/>
+                   <xs:element name="avatar" type="xs:string"/>
+                   <xs:element name="anniversaire" type="xs:date"/>
+                   <xs:element name="parties" type="tux:Parties"/>
+               </xs:sequence>
+           </xs:complexType>
+
+            <!-- Definition de Parties qui contient un ou pluieurs type Partie-->
+           <xs:complexType name="Parties">               
+               <xs:sequence>
+                   <xs:element name="partie" type="tux:Partie" minOccurs="1" maxOccurs="unbounded"/>
+               </xs:sequence>
+           </xs:complexType>
+
+           <!-- Définition de Partie avec un attribut date et deux elememnts temps et mots-->
+           <xs:complexType name="Partie">
+               <xs:sequence>
+                    <xs:element name="temps" type="xs:double" minOccurs="0" maxOccurs="1"/> 
+                    <xs:element name="mot" type="tux:Mot" minOccurs="1" maxOccurs="1"/>
+               </xs:sequence>
+               <xs:attribute name="date" type="xs:date"></xs:attribute>
+               <xs:attribute name="trouvé" type="xs:string" use="optional"/>
+               <!-- Trouvé integer ? pas string (pourcentage) -->
+           </xs:complexType>
+</xs:schema>

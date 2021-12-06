@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<xs:schema version="1.0"
+           targetNamespace="http://myGame/tux"
+           xmlns:tux="http://myGame/tux"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+        <!-- Défintion dictionnaire avec un ou plusiuers mots de type Mot-->
+        <xs:element name="dictionnaire" type="tux:Dictionnaire"/>
+        <xs:complexType name="Dictionnaire">
+            <xs:sequence>
+                <xs:element name="mot" type="tux:Mot" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <!-- Restriction expression regulière: MAJUSCULES avec possibilité d'un tiret au mileu avec aux moins une lettre qui suit-->
+        <xs:simpleType name="restrictionMot">
+            <xs:restriction base="xs:string">
+                <xs:pattern value="([A-Z])([A-Z])*((-)*([A-Z]))*([A-Z])*"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <!-- defintion Mot Type simple avec attribut et restriction-->
+        <xs:complexType name="Mot">
+            <xs:simpleContent>
+                <xs:extension base="tux:restrictionMot">
+                    <xs:attribute name="niveau" type="xs:int"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+</xs:schema>
