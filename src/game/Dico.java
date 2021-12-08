@@ -17,9 +17,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
-public class Dico {
+public class Dico extends DefaultHandler{
     
     private ArrayList<String> listeNiveau1;
     private ArrayList<String> listeNiveau2;
@@ -31,7 +33,10 @@ public class Dico {
 
     private String cheminFichierDico;
 
+    private StringBuffer buffer;
+
     public Dico(String cheminFichierDico){
+        super();
         this.cheminFichierDico=cheminFichierDico;
         
         listeNiveau1 = new ArrayList<>();
@@ -48,6 +53,70 @@ public class Dico {
         liste.add(listeNiveau4);
         liste.add(listeNiveau5);
 
+        
+    }
+
+    private String currentMot;
+    private int currentNiveau;
+    boolean inMot;
+    private StringBuilder currentValue = new StringBuilder();
+
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        currentValue.setLength(0);
+        // if(qName.equals("dictionnaire")){
+        //     // currentMot=
+        // }
+        if(qName.equals("mot")){
+            // currentValue =new StringBuilder();
+            currentMot = new String();
+            inMot=true;
+            int niveau=Integer.parseInt(attributes.getValue("niveau"));
+            currentNiveau=niveau;
+        }
+
+    }
+    
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        if(qName.equals("mot")){
+            currentMot=currentValue.toString();
+            ajouteMotADico(currentNiveau, currentMot);
+            currentMot=null;
+            // currentValue=null;
+            inMot=false;
+        }
+    }
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        // String lecture = new String(ch, start, length);
+        if(inMot){
+            currentValue.append(ch, start, length);
+        }
+        
+    }
+    @Override
+    public void startDocument() throws SAXException {
+        System.out.println("startDocument()");
+    }
+
+    @Override
+    public void endDocument() throws SAXException {
+        System.out.println("endDocument()");
+
+    } 
+
+    public void lireDictionnaire(String filename) throws SAXException{
+        try{
+            SAXParserFactory fabrique = SAXParserFactory.newInstance();
+            SAXParser parseur = fabrique.newSAXParser(); 
+            File fichier = new File(filename); 
+            // DefaultHandler gestionnaire = new PersonneHandler(); 
+            parseur.parse(fichier, this);
+        }
+        catch(Exception e){
+            System.out.println("erreur lecture sax: "+e);
+        }
         
     }
 

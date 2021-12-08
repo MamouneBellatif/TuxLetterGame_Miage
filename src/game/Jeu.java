@@ -501,7 +501,8 @@ public abstract class Jeu {
 
     private void initDico(){
         try {
-            dico.lireDictionnaireDOM("Data/xml/", "dico.xml");
+            // dico.lireDictionnaireDOM("Data/xml/", "dico.xml");
+            dico.lireDictionnaire("Data/xml/dico.xml");
         }
         catch(Exception e){
             
