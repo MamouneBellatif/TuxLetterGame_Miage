@@ -344,6 +344,29 @@ public class XMLUtil {
 
         }
 
+        public static void writeDoc2(Document doc, String outputFileName) throws Exception {
+            
+            Transformer t = TransformerFactory.newInstance().newTransformer(new StreamSource(new File("Data/xml/newline.xsl")));
+            DocumentType dt = doc.getDoctype();
+            if (dt != null) {
+                String pub = dt.getPublicId();
+                if (pub != null) {
+                    t.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, pub);
+                }
+                t.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, dt.getSystemId());
+            }
+            t.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); // NOI18N
+
+            t.setOutputProperty(OutputKeys.INDENT, "yes"); // NOI18N
+
+            t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4"); // NOI18N
+
+            Source source = new DOMSource(doc);
+            Result result = new StreamResult(new FileOutputStream(outputFileName));
+            t.transform(source, result);
+
+        }
+
         /**
          * Cette méthode applique une transformation à un Document DOM et
          * renvoie le document transformé sous la forme d'une chaine de

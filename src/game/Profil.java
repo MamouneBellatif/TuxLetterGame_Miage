@@ -152,7 +152,8 @@ public class Profil {
     // Sauvegarde un DOM en XML
     public void toXML(String nomFichier) {
         try {
-            XMLUtil.DocumentTransform.writeDoc(_doc, nomFichier);
+            // XMLUtil.DocumentTransform.writeDoc(_doc, nomFichier);
+            XMLUtil.DocumentTransform.writeDoc2(_doc, nomFichier);
         } catch (Exception ex) {
             Logger.getLogger(Profil.class.getName()).log(Level.SEVERE, null, ex);
         }
