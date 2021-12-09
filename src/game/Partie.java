@@ -26,7 +26,9 @@ public class Partie implements Comparable<Partie> {
         String mot=motElt.getTextContent();
         String temps=tempsElt.getTextContent();
         String date=partieElt.getAttribute("date");
-
+        String trouvé=partieElt.getAttribute("trouvé");
+        System.out.println("trouv "+trouvé);
+        // int trouvé=Integer.parseInt(partieElt.getAttribute("trouvé"));
         String niveauString=motElt.getAttributeNode("niveau").getTextContent();
 
         //initaliser trouvé ?
@@ -37,7 +39,11 @@ public class Partie implements Comparable<Partie> {
         this.temps=(int) Double.parseDouble(temps);
         this.date=Profil.xmlDateToProfileDate(date);
         this.niveau=niveau;
-
+        try{
+            this.trouvé=Integer.parseInt(trouvé);
+        }catch(Exception ex){
+            this.trouvé=0;
+        }
         
     }
 
@@ -115,9 +121,8 @@ public class Partie implements Comparable<Partie> {
 
     @Override
     public int compareTo(Partie p) {
-        // TODO Auto-generated method stub
-        int score=getNiveau()*100/getTemps();
-        int pScore=((Partie) p).getNiveau()*100/((Partie) p).getTemps();
+        int score=getNiveau()*100*getTrouve()/getTemps();
+        int pScore=((Partie) p).getNiveau()*100*((Partie) p).getTrouve()/((Partie) p).getTemps();
         // int pScore=p.getNiveau()*100/p.getTemps();
         return pScore-score;
     }

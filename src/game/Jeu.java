@@ -182,7 +182,7 @@ public abstract class Jeu {
     }
 //a
 
-    public int afficheParties(){
+    public int affichePartiesOld(){
 
         //alterntive si pas de place, pages ou naviguer entre partie
         int nbParties = profil.getParties().size();
@@ -199,6 +199,64 @@ public abstract class Jeu {
         for (int i = 0; i < nbParties; i++) {
             menuText.getText("partie"+i).clean();
         }
+        return choixPartie;
+    }
+    public int afficheParties(){
+        //alterntive si pas de place, pages ou naviguer entre partie
+        ArrayList<Partie> alPartie= new ArrayList<Partie>();
+        int nbParties = profil.getParties().size();
+        
+        for (Partie partie : profil.getParties()) {
+            //index * constante / taille
+            alPartie.add(partie);
+        }
+
+        menuText.addText("(1.jouer 2.partie précedente 3.partie suivante 4.revenir","partieCtrl",100,200);
+        menuText.getText("partieCtrl").display();
+
+        
+        int index=0;
+        boolean menu=true;
+        menuText.addText(alPartie.get(index).toString(), "partieChoix",100,300);
+        //index%nbPartie
+        int moduloIndex;
+        do{
+            moduloIndex=Math.floorMod(index, alPartie.size()); //le modulo en java donne des resultats negatif, cette fonction est plus adaptée
+            // moduloIndex=Math.abs(index%alPartie.size());
+            System.out.println("index: "+moduloIndex);
+            menuText.getText("partieChoix").modifyTextAndDisplay((moduloIndex+1)+"/"+alPartie.size()+alPartie.get(moduloIndex).toString()); //navigue entre les parti et affiche le l'index modulo le nombre de partie pour ne pas sortir de la liste
+            // menuText.getText("partieChoix").display();
+            int touche=0;
+            while (!(touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 ||touche == Keyboard.KEY_3  ||touche == Keyboard.KEY_4)){// ||touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3 || touche == Keyboard.KEY_NUMPAD1 || touche ==  Keyboard.KEY_NUMPAD2 || touche ==  Keyboard.KEY_NUMPAD3)) {
+                touche = env.getKey();
+                env.advanceOneFrame();
+            }
+
+            switch (touche) {
+                case Keyboard.KEY_2:
+                    index--;
+                    break;
+                case Keyboard.KEY_3: 
+                    index++;
+                    break;
+                case Keyboard.KEY_1:
+                    // index=index%nbParties;
+                    menu=false;
+                    break;
+                case Keyboard.KEY_4:
+                    // index=index%nbParties;
+                    menu=false;
+                    break;
+            }
+            // index=index%alPartie.size();
+            // index=Math.abs(index%alPartie.size());
+            // index=index%alPartie.size();
+        }while(menu);
+
+        int choixPartie = moduloIndex;
+
+        menuText.getText("partieChoix").clean();
+        menuText.getText("partieCtrl").clean();
         return choixPartie;
     }
     
