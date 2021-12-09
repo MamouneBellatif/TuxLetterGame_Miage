@@ -86,6 +86,11 @@ public abstract class Jeu {
         menuText.addText("Choissiez l'indice de la partie souhaitée: ", "index", 200, 300);
         menuText.addText("Erreur. Choissiez l'indice de la partie souhaitée: ", "indexErreur", 200, 300);
 
+        menuText.addText("5. Ajouter un mot ?", "Principal5", 250, 200);
+        menuText.addText("Entrez le mot a ajouter: ", "ajoutMot", 250, 300);
+
+
+
         //intancie les lettres
         lettres = new ArrayList<>();
 
@@ -122,6 +127,14 @@ public abstract class Jeu {
         String input="";
         menuText.getText(message).display();
         // input = menuText.getText(message).lire(true);
+        input = menuText.getText(message).lire(true);
+        menuText.getText(message).clean();
+        return input;
+    }
+    private String lireEntier(String message){
+        String input="";
+        menuText.getText(message).display();
+        // input = menuText.getText(message).lire(true);
         input = menuText.getText(message).lireNombre(true);
         menuText.getText(message).clean();
         return input;
@@ -134,7 +147,7 @@ public abstract class Jeu {
         Boolean success=false;
         do{
             try {
-                niveau=Integer.parseInt(lireTexte(message));
+                niveau=Integer.parseInt(lireEntier(message));
                 success=true;
             }
             catch (NumberFormatException e){
@@ -168,6 +181,7 @@ public abstract class Jeu {
     
     }
 //a
+
     public int afficheParties(){
 
         //alterntive si pas de place, pages ou naviguer entre partie
@@ -188,6 +202,9 @@ public abstract class Jeu {
         return choixPartie;
     }
     
+    public void hiScore(){
+
+    }
     // fourni, à compléter
     private MENU_VAL menuJeu() {
 
@@ -239,13 +256,12 @@ public abstract class Jeu {
                     // crée un nouvelle partie
                     partie = new Partie(formatter.format(date), mot, niveau);
          
-        
                     // joue
                     joue(partie);
                     // enregistre la partie dans le profil --> enregistre le profil
                     // .......... profil.******
                     profil.ajouterPartie(partie);
-                    profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
+                    profil.sauvegarder("Data/xml/profils/"+profil.getNom()+".xml");
                     playTheGame = MENU_VAL.MENU_JOUE;
                     break;
 
@@ -258,10 +274,10 @@ public abstract class Jeu {
                     partie = profil.getParties().get(partieIndex);
                     joue(partie);
                     // profil.ajouterPartie(partie);
-                    profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
+                    profil.sauvegarder("Data/xml/profils/"+profil.getNom()+".xml");
                     playTheGame = MENU_VAL.MENU_JOUE;
                     //profil.ajouterPartie(partie);
-                    // profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
+                    // profil.sauvegarder("Data/xml/profils/"+profil.getNom()+".xml");
                     // profil.sauvegarder(filename);
                     // partie = new Partie("07/09/2020", "test", 1); //XXXXXXXXX
                     // Recupère le mot de la partie existante
@@ -309,9 +325,9 @@ public abstract class Jeu {
 
     private boolean loadProfil(String nom){
         boolean check=false;
-        File fichierProfil = new File("Data/xml/"+nom+".xml");
+        File fichierProfil = new File("Data/xml/profils/"+nom+".xml");
         if(fichierProfil.exists()){
-            profil= new Profil("Data/xml/"+nom+".xml");
+            profil= new Profil("Data/xml/profils/"+nom+".xml");
             check=true;
         }
         else{
@@ -322,7 +338,7 @@ public abstract class Jeu {
 
     private boolean checkProfil(String nom){
         boolean check=false;
-        File fichierProfil = new File("Data/xml/"+nom+".xml");
+        File fichierProfil = new File("Data/xml/profils/"+nom+".xml");
         if(!fichierProfil.exists()){
             profil= new Profil(nom, "04/10/1998");
             check=true;
@@ -335,7 +351,7 @@ public abstract class Jeu {
 
     private boolean deleteProfil(String nom){
         boolean check=false;
-        File fichierProfil = new File("Data/xml/"+nom+".xml");
+        File fichierProfil = new File("Data/xml/profils/"+nom+".xml");
         if(fichierProfil.exists()){
             fichierProfil.delete();
             check=true;
@@ -346,6 +362,16 @@ public abstract class Jeu {
         return check;
     }
 
+    private void menuAjout(){
+        EditeurDico ed = new EditeurDico("Data/xml/dico.xml");
+        String mot = lireTexte("ajoutMot"); //
+        System.out.println("mot: "+mot);
+        int niveau = getNiveau();
+        System.out.println("niveau: "+niveau);
+        // ed.ajouterMot(mot.toUpperCase(), niveau);
+        ed.editer(mot, niveau);
+        
+    }
     private MENU_VAL menuPrincipal() {
 
         MENU_VAL choix = MENU_VAL.MENU_CONTINUE;
@@ -359,11 +385,12 @@ public abstract class Jeu {
         menuText.getText("Principal2").display();
         menuText.getText("Principal3").display();
         menuText.getText("Principal4").display();
+        menuText.getText("Principal5").display();
                
         // vérifie qu'une touche 1, 2 ou 3 est pressée
         int touche = 0;
         
-        while (!(touche == Keyboard.KEY_4 || touche == Keyboard.KEY_NUMPAD4 ||touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3 || touche == Keyboard.KEY_NUMPAD1 || touche ==  Keyboard.KEY_NUMPAD2 || touche ==  Keyboard.KEY_NUMPAD3)) {
+        while (!(touche == Keyboard.KEY_4 || touche == Keyboard.KEY_NUMPAD5 ||touche == Keyboard.KEY_5  ||touche == Keyboard.KEY_NUMPAD4 ||touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3 || touche == Keyboard.KEY_NUMPAD1 || touche ==  Keyboard.KEY_NUMPAD2 || touche ==  Keyboard.KEY_NUMPAD3)) {
             touche = env.getKey();
             env.advanceOneFrame();
         }
@@ -374,6 +401,7 @@ public abstract class Jeu {
         menuText.getText("Principal2").clean();
         menuText.getText("Principal3").clean();
         menuText.getText("Principal4").clean();
+        menuText.getText("Principal5").clean();
 
 
         touche=checkNumpad(touche); //prise en compte du pavé numerique
@@ -415,8 +443,9 @@ public abstract class Jeu {
             // Touche 3 : Sortir du jeu
             // -------------------------------------
             case Keyboard.KEY_3:
+            System.out.println("sortir");
                 choix = MENU_VAL.MENU_SORTIE;
-            
+            break;
             case Keyboard.KEY_4:
                 nomJoueur=getNomJoueur();
                 if(deleteProfil(nomJoueur)){
@@ -425,6 +454,10 @@ public abstract class Jeu {
                 else{
                     System.out.println("profil n'existe pas");
                 }
+                choix = MENU_VAL.MENU_CONTINUE;
+            case Keyboard.KEY_5:
+                //ajout mot
+                menuAjout();
                 choix = MENU_VAL.MENU_CONTINUE;
         }
         return choix;
@@ -449,6 +482,13 @@ public abstract class Jeu {
         menuText.getText("chrono").destroy();
     }
 
+    protected void waitInput(){
+        int touche = 0;
+        while (!(touche == Keyboard.KEY_1 || touche == Keyboard.KEY_NUMPAD1)){
+            touche = env.getKey();
+            env.advanceOneFrame();
+        }
+    }
    
     public void joue(Partie partie) {
 
@@ -470,11 +510,7 @@ public abstract class Jeu {
         finished = false;
         while (!finished) {
 
-            // Contrôles globaux du jeu (sortie, ...)
-            //1 is for escape key
-            if (env.getKey() == 1) {
-                finished = true;
-            }
+            
 
             // Contrôles des déplacements de Tux (gauche, droite, ...)
             tux.deplace(lettres);
@@ -482,7 +518,13 @@ public abstract class Jeu {
             collisionScan();
             // Ici, on applique les regles
             appliqueRegles(partie);
-
+            // appliqueRegles(partie);
+            finished=isFinished();
+            // Contrôles globaux du jeu (sortie, ...)
+            //1 is for escape key
+            if (env.getKey() == 1 ) {
+                finished = true;
+            }
             // Fait avancer le moteur de jeu (mise à jour de l'affichage, de l'écoute des événements clavier...)
             env.advanceOneFrame();
         }
@@ -493,6 +535,8 @@ public abstract class Jeu {
         // profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
     }
 
+    protected abstract boolean isFinished(); //indique a Jeu que la partie est fini(fin du chrono ou lettres trouvées)
+
     protected abstract void démarrePartie(Partie partie);
 
     protected abstract void appliqueRegles(Partie partie);
@@ -501,7 +545,7 @@ public abstract class Jeu {
 
     private void initDico(){
         try {
-            // dico.lireDictionnaireDOM("Data/xml/", "dico.xml");
+            // dico.lireDictionnaireDOM("Data/xml/profils/", "dico.xml");
             dico.lireDictionnaire("Data/xml/dico.xml");
         }
         catch(Exception e){

@@ -75,8 +75,8 @@ public class Profil {
             Element partiesElt=_doc.createElement("parties");
             profilElt.appendChild(partiesElt);
             
-            // DocumentTransform.writeDoc(_doc, "Data/xml/"+nom+".xml");
-            sauvegarder("Data/xml/"+nom+".xml");
+            // DocumentTransform.writeDoc(_doc, "Data/xml/profils/"+nom+".xml");
+            sauvegarder("Data/xml/profils/"+nom+".xml");
             System.out.println("Nouveau profil créé!");
         }
         catch (Exception e){

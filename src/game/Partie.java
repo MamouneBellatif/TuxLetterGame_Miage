@@ -4,12 +4,13 @@ import javax.xml.parsers.*;
 import java.io.*;
 import java.io.File;
 
-public class Partie {
+public class Partie implements Comparable<Partie> {
     private String date;
     private String mot;
     private int niveau;
     private int trouvé;
     private int temps;
+    private String nom;
 
     public Partie(String date, String mot, int niveau) {
         this.date=date;
@@ -75,8 +76,8 @@ public class Partie {
     }
     public void setTrouve(int nbLettresRestantes){
         // trouvé=mot.length()-nbLettresRestantes;
-        System.out.println("longeur: "+mot.length());
-        System.out.println("restant: "+nbLettresRestantes);
+        // System.out.println("longeur: "+mot.length());
+        // System.out.println("restant: "+nbLettresRestantes);
         double pourcentage = ((double) mot.length()- (double) nbLettresRestantes)/ (double) mot.length()*100;
         System.out.println("pourc: "+pourcentage);
         trouvé=(int) pourcentage;
@@ -89,6 +90,17 @@ public class Partie {
         this.temps=temps;
     }
 
+    public void setNom(String nom){
+        this.nom=nom;
+    }
+
+    public String getNom(){
+        return nom;
+    }
+    public int getTemps(){
+        return temps;
+    }
+
     public int getNiveau(){
         return niveau;
     }
@@ -99,6 +111,15 @@ public class Partie {
 
     public String toString(){
         return "Mot: "+mot+" Date: "+date+" Trouvé: "+trouvé+" Temps: "+temps;
+    }
+
+    @Override
+    public int compareTo(Partie p) {
+        // TODO Auto-generated method stub
+        int score=getNiveau()*100/getTemps();
+        int pScore=((Partie) p).getNiveau()*100/((Partie) p).getTemps();
+        // int pScore=p.getNiveau()*100/p.getTemps();
+        return pScore-score;
     }
     
 }
