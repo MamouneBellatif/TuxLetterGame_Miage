@@ -11,7 +11,7 @@ public class Partie implements Comparable<Partie> {
     private int trouvé;
     private int temps;
     private String nom;
-
+    private int score;
     public Partie(String date, String mot, int niveau) {
         this.date=date;
         this.mot=mot;
@@ -44,7 +44,7 @@ public class Partie implements Comparable<Partie> {
         }catch(Exception ex){
             this.trouvé=0;
         }
-        
+        this.score=getNiveau()*100*getTrouve()*mot.length()/getTemps();
     }
 
     public Element getPartie(Document doc){
@@ -92,8 +92,21 @@ public class Partie implements Comparable<Partie> {
     public int getTrouve(){
         return trouvé;
     }
+
+    public void setScore(int score){
+        this.score = score;
+    }
+
+    public int getScore(){
+        return score;
+    }
     public void setTemps(int temps){
-        this.temps=temps;
+        if(temps==0){
+            this.temps=40;
+        }
+        else{
+            this.temps=temps; 
+        }
     }
 
     public void setNom(String nom){
@@ -124,7 +137,8 @@ public class Partie implements Comparable<Partie> {
         int score=getNiveau()*100*getTrouve()/getTemps();
         int pScore=((Partie) p).getNiveau()*100*((Partie) p).getTrouve()/((Partie) p).getTemps();
         // int pScore=p.getNiveau()*100/p.getTemps();
-        return pScore-score;
+        // return pScore-score;
+        return  p.getScore()-this.score;
     }
     
 }

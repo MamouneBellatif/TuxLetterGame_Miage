@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="xslt/profil.xsl"?><!--
+    Document   : save_example.xml.xml
+    Created on : August 31, 2014, 3:31 PM
+    Author     : Johan Sarrazin / Céline Fouard / Nicolas Glade
+    Description:
+        Purpose of the document follows.
+--><profil xmlns="http://myGame/tux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://myGame/tux ../xsd/profil.xsd">
+    <nom>Mamoune</nom>
+    <avatar>mamoune.jpg</avatar>
+    <anniversaire>1998-10-04</anniversaire>
+    <parties>
+        <partie date="2013-12-10">
+            <temps>20.0</temps>
+            <mot niveau="1">PROCESSEUR</mot>
+        </partie>
+        <partie date="2013-12-11" trouvé="75">
+            <temps>20.0</temps>
+            <mot niveau="2">INDICE</mot>
+        </partie>
+        <partie date="2013-12-11">
+            <temps>20.0</temps>
+            <mot niveau="2">INDICE</mot>
+        </partie>
+        <partie date="2021-12-06" trouvé="100">
+            <temps>22</temps>
+            <mot niveau="3">NOYAU</mot>
+        </partie>
+        <partie date="2021-12-06" trouvé="100">
+            <temps>16</temps>
+            <mot niveau="3">NOYAU</mot>
+        </partie>
+        <partie date="2021-12-06" trouvé="0">
+            <temps>47</temps>
+            <mot niveau="3">ADRESSE</mot>
+        </partie>
+        <partie date="2021-12-06" trouvé="0">
+            <temps>41</temps>
+            <mot niveau="3">ADRESSE</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>34</temps>
+            <mot niveau="3">PROCESSEUR</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>29</temps>
+            <mot niveau="1">PARTICULE</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>38</temps>
+            <mot niveau="5">QUANTIQUE</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>16</temps>
+            <mot niveau="3">QOTSA</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>22</temps>
+            <mot niveau="2">QUARK</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>19</temps>
+            <mot niveau="4">TORTUE</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>33</temps>
+            <mot niveau="5">SUPERPOSITION</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>21</temps>
+            <mot niveau="5">QUANTIQUE</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>20</temps>
+            <mot niveau="5">LATERALUS</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>6</temps>
+            <mot niveau="2">LSD</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>6</temps>
+            <mot niveau="2">LSD</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="7">
+            <temps>40</temps>
+            <mot niveau="5">SUPERPOSITION</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>13</temps>
+            <mot niveau="3">QOTSA</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>11</temps>
+            <mot niveau="2">LSD</mot>
+        </partie>
+        <partie date="2021-12-08" trouvé="100">
+            <temps>5</temps>
+            <mot niveau="2">LSD</mot>
+        </partie>
+        <partie date="2021-12-10" trouvé="100">
+            <temps>9</temps>
+            <mot niveau="3">QOTSA</mot>
+        </partie>
+        <partie date="2021-12-10" trouvé="100">
+            <temps>7</temps>
+            <mot niveau="2">LSD</mot>
+        </partie>
+    </parties>
+</profil>

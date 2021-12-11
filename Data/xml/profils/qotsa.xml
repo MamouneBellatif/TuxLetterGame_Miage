@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<profil xmlns="http://myGame/tux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://myGame/tux ../xsd/profil.xsd">
+                        
+    
+    
+    
+    
+    <nom>qotsa</nom>
+                        
+    
+    
+    
+    
+    <avatar/>
+                        
+    
+    
+    
+    
+    <anniversaire>1998-10-04</anniversaire>
+                        
+    
+    
+    
+    
+    <parties>
+                                                
+        
+        
+        
+        
+        <partie date="2021-11-21" trouvé="100">
+                                                                        
+            
+            
+            
+            
+            <temps>33</temps>
+                                                                        
+            
+            
+            
+            
+            <mot niveau="3">PROCESSEUR</mot>
+                                                                    
+        
+        
+        
+        
+        </partie>
+                                                
+        
+        
+        
+        
+        <partie date="2021-11-21" trouvé="100">
+                                                                        
+            
+            
+            
+            
+            <temps>12</temps>
+                                                                        
+            
+            
+            
+            
+            <mot niveau="3">QOTSA</mot>
+                                                                    
+        
+        
+        
+        
+        </partie>
+                                            
+        
+        
+        
+        
+        <partie date="2021-12-06" trouvé="100">
+                                                            
+            
+            
+            
+            <temps>19</temps>
+                                                            
+            
+            
+            
+            <mot niveau="3">ADRESSE</mot>
+                                                        
+        
+        
+        
+        </partie>
+                                    
+        
+        
+        
+        <partie date="2021-12-06" trouvé="100">
+                                                
+            
+            
+            <temps>15</temps>
+                                                
+            
+            
+            <mot niveau="3">ADRESSE</mot>
+                                            
+        
+        
+        </partie>
+                            
+        
+        
+        <partie date="2021-12-06" trouvé="50">
+                                    
+            
+            <temps>42</temps>
+                                    
+            
+            <mot niveau="3">PROCESSEUR</mot>
+                                
+        
+        </partie>
+                    
+        
+        <partie date="2021-12-08" trouvé="100">
+                        
+            <temps>15</temps>
+                        
+            <mot niveau="3">QOTSA</mot>
+                    
+        </partie>
+                
+        <partie date="2021-12-08" trouvé="100">
+                        
+            <temps>21</temps>
+                        
+            <mot niveau="3">ADRESSE</mot>
+                    
+        </partie>
+            
+        <partie date="2021-12-08" trouvé="100">
+            <temps>35</temps>
+            <mot niveau="3">ORDINATEUR</mot>
+        </partie>
+    </parties>
+                    
+
+
+
+
+</profil>

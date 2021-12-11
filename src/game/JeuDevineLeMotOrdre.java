@@ -60,7 +60,8 @@ public class JeuDevineLeMotOrdre extends Jeu {
 
     public void finishScreen(Partie partie){ //affichage du score a la fin et attend l'utilisateur
         int trouve =partie.getMot().length()-nbLettresRestantes;
-        int score=partie.getNiveau()*100*partie.getTrouve()/getTemps();
+        int score=partie.getNiveau()*100*partie.getTrouve()*partie.getMot().length()/getTemps();
+        partie.setScore(score);
         menuText.addText("Vous avez trouvé "+trouve+" lettres ("+partie.getTrouve()+"%)", "trouve", 200, 340);
         menuText.addText("en "+getTemps()+" secondes", "temps", 260, 320);
         menuText.addText("Vous avez gagné! ", "win", 260, 280);
@@ -113,6 +114,8 @@ public class JeuDevineLeMotOrdre extends Jeu {
     }
 
     public void terminePartie(Partie partie){
+        chrono.stop();
+        partie.setTemps(getTemps());
         menuText.getText("timer").clean();
         menuText.getText("controls").clean();
 
@@ -143,15 +146,15 @@ public class JeuDevineLeMotOrdre extends Jeu {
         displayTimer();
         // System.out.println("Il reste "+chrono.getRemaining()+" secondes, LettresRestantes: "+nbLettresRestantes);
         if(!chrono.remainsTime()){
-            chrono.stop();
-            partie.setTemps(getTemps());
+            // chrono.stop();
+            // partie.setTemps(getTemps());
             this.finished=true;
             noTime=true;
 
         }
         else if(nbLettresRestantes==0){
-            chrono.stop();
-            partie.setTemps(getTemps());
+            // chrono.stop();
+            // partie.setTemps(getTemps());
             this.finished=true;
             this.win=true;
         }

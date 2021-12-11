@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><profil xmlns="http://myGame/tux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://myGame/tux ../xsd/profil.xsd">
+    <nom>qta</nom>
+    <avatar/>
+    <anniversaire>1998-10-04</anniversaire>
+    <parties>
+        <partie date="2021-12-09" trouvé="100">
+            <temps>17</temps>
+            <mot niveau="3">QOTSA</mot>
+        </partie>
+        <partie date="2021-12-09" trouvé="100">
+            <temps>5</temps>
+            <mot niveau="2">LSD</mot>
+        </partie>
+        <partie date="2021-12-10" trouvé="0">
+            <temps>3</temps>
+            <mot niveau="3">ORDINATEUR</mot>
+        </partie>
+    </parties>
+</profil>

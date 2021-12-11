@@ -76,8 +76,8 @@ public abstract class Jeu {
         menuText.addText("Choisissez un nom de joueur : ", "NomJoueur", 200, 300);
         menuText.addText("1. Charger un profil de joueur existant ?", "Principal1", 250, 280);
         menuText.addText("2. Créer un nouveau joueur ?", "Principal2", 250, 260);
-        menuText.addText("3. Sortir du jeu ?", "Principal3", 250, 240);
         menuText.addText("4. Supprimer un profil ?", "Principal4", 250, 220);
+        menuText.addText("6. Sortir du jeu ?", "Principal6", 250, 180);
 
         //Textes
         menuText.addText("Entrez un niveau entre 1 et 5: ", "niveau", 200, 300);
@@ -88,6 +88,9 @@ public abstract class Jeu {
 
         menuText.addText("5. Ajouter un mot ?", "Principal5", 250, 200);
         menuText.addText("Entrez le mot a ajouter: ", "ajoutMot", 250, 300);
+
+        menuText.addText("3. Afficher le classement ?", "Principal3", 250, 240);
+
 
 
 
@@ -240,17 +243,13 @@ public abstract class Jeu {
                     index++;
                     break;
                 case Keyboard.KEY_1:
-                    // index=index%nbParties;
                     menu=false;
                     break;
                 case Keyboard.KEY_4:
-                    // index=index%nbParties;
+                    moduloIndex=-1;
                     menu=false;
                     break;
             }
-            // index=index%alPartie.size();
-            // index=Math.abs(index%alPartie.size());
-            // index=index%alPartie.size();
         }while(menu);
 
         int choixPartie = moduloIndex;
@@ -329,22 +328,15 @@ public abstract class Jeu {
                 case Keyboard.KEY_2: // charge une partie existante
                 //affichier liste des parties
                     int partieIndex= afficheParties();
-                    partie = profil.getParties().get(partieIndex);
-                    joue(partie);
-                    // profil.ajouterPartie(partie);
-                    profil.sauvegarder("Data/xml/profils/"+profil.getNom()+".xml");
+                    if(partieIndex!=-1){
+                        // Recupère le mot de la partie existante
+                        // enregistre la partie dans le profil --> enregistre le profil
+                        partie = profil.getParties().get(partieIndex);
+                        joue(partie);
+                        // profil.ajouterPartie(partie);
+                        profil.sauvegarder("Data/xml/profils/"+profil.getNom()+".xml");
+                    }
                     playTheGame = MENU_VAL.MENU_JOUE;
-                    //profil.ajouterPartie(partie);
-                    // profil.sauvegarder("Data/xml/profils/"+profil.getNom()+".xml");
-                    // profil.sauvegarder(filename);
-                    // partie = new Partie("07/09/2020", "test", 1); //XXXXXXXXX
-                    // Recupère le mot de la partie existante
-                    // ..........
-                    // joue
-                    // joue(partie);
-                    // enregistre la partie dans le profil --> enregistre le profil
-                    // .......... profil.******
-                    // playTheGame = MENU_VAL.MENU_CONTINUE; //temporaire
                     break;
 
                 // -----------------------------------------
@@ -444,11 +436,12 @@ public abstract class Jeu {
         menuText.getText("Principal3").display();
         menuText.getText("Principal4").display();
         menuText.getText("Principal5").display();
+        menuText.getText("Principal6").display();
                
         // vérifie qu'une touche 1, 2 ou 3 est pressée
         int touche = 0;
         
-        while (!(touche == Keyboard.KEY_4 || touche == Keyboard.KEY_NUMPAD5 ||touche == Keyboard.KEY_5  ||touche == Keyboard.KEY_NUMPAD4 ||touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3 || touche == Keyboard.KEY_NUMPAD1 || touche ==  Keyboard.KEY_NUMPAD2 || touche ==  Keyboard.KEY_NUMPAD3)) {
+        while (!(touche == Keyboard.KEY_NUMPAD6 || touche == Keyboard.KEY_6 ||touche == Keyboard.KEY_4 || touche == Keyboard.KEY_NUMPAD5 ||touche == Keyboard.KEY_5  ||touche == Keyboard.KEY_NUMPAD4 ||touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3 || touche == Keyboard.KEY_NUMPAD1 || touche ==  Keyboard.KEY_NUMPAD2 || touche ==  Keyboard.KEY_NUMPAD3)) {
             touche = env.getKey();
             env.advanceOneFrame();
         }
@@ -460,6 +453,7 @@ public abstract class Jeu {
         menuText.getText("Principal3").clean();
         menuText.getText("Principal4").clean();
         menuText.getText("Principal5").clean();
+        menuText.getText("Principal6").clean();
 
 
         touche=checkNumpad(touche); //prise en compte du pavé numerique
@@ -500,7 +494,7 @@ public abstract class Jeu {
             // -------------------------------------
             // Touche 3 : Sortir du jeu
             // -------------------------------------
-            case Keyboard.KEY_3:
+            case Keyboard.KEY_6:
             System.out.println("sortir");
                 choix = MENU_VAL.MENU_SORTIE;
             break;
@@ -513,10 +507,18 @@ public abstract class Jeu {
                     System.out.println("profil n'existe pas");
                 }
                 choix = MENU_VAL.MENU_CONTINUE;
+                break;
             case Keyboard.KEY_5:
                 //ajout mot
                 menuAjout();
                 choix = MENU_VAL.MENU_CONTINUE;
+                break;
+            case Keyboard.KEY_3:
+                Classement classement = new Classement();
+                classement.toHTML();
+                classement.affiche();
+                choix = MENU_VAL.MENU_CONTINUE;
+                break;
         }
         return choix;
     }
