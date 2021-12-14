@@ -5,8 +5,7 @@ public class Chronomètre {
     private long end;
     private long current;
     private int limite;
-    private long pauseTime;
-    private int remain;
+
     public Chronomètre(int limite) {
         //intialisation
         this.limite=limite;
@@ -26,15 +25,7 @@ public class Chronomètre {
         // end = current;
     }
 
-    public void pause(){
-        long pauseTime=System.currentTimeMillis();
-        remain=getRemaining();
-    }
- 
-    public void unPause(){
-        long unPauseTime=System.currentTimeMillis();
-        limite=limite+((int) unPauseTime-(int) pauseTime);
-    }
+
     public long getTime() {
         return end-begin;
     }

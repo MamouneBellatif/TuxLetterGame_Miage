@@ -344,9 +344,16 @@ public class XMLUtil {
 
         }
 
+        /**
+         * Ecrit un Document doc dans un fihier xml, utilise une feuille de transformation pour enlever des sauts de ligne
+         *
+         * @param doc the DOM Document to serialize in a file
+         * @param outputFileName the file name to write to
+         * @throws java.lang.Exception
+         */
         public static void writeDoc2(Document doc, String outputFileName) throws Exception {
             
-            Transformer t = TransformerFactory.newInstance().newTransformer(new StreamSource(new File("Data/xml/newline.xsl")));
+            Transformer t = TransformerFactory.newInstance().newTransformer(new StreamSource(new File("Data/xml/xslt/newline.xsl")));
             DocumentType dt = doc.getDoctype();
             if (dt != null) {
                 String pub = dt.getPublicId();

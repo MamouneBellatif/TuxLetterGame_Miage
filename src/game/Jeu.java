@@ -26,12 +26,11 @@ public abstract class Jeu {
     private final Room mainRoom;
     private final Room homeRoom;
     private final Room menuRoom;
-    private Letter letter;
     private Profil profil;
     private final Dico dico;
     protected EnvTextMap menuText;                         //text (affichage des texte du jeu)
     ArrayList<Letter> lettres;
-    private Mountain montagne;
+    //private Mountain montagne;
     
     
     public Jeu() {
@@ -116,7 +115,11 @@ public abstract class Jeu {
     }
 
 
-    // fourni
+    
+    /** 
+     *  fourni
+     * @return String
+     */
     private String getNomJoueur() {
         String nomJoueur = "";
         menuText.getText("NomJoueur").display();
@@ -125,7 +128,12 @@ public abstract class Jeu {
         return nomJoueur;
     }
 
-    //Lis texte entrée par utilisaeur avec un message affiché
+    
+    /** 
+     * Entré utilisater avec un message
+     * @param message message affiché a l'utilisateur
+     * @return String
+     */
     private String lireTexte(String message){
         String input="";
         menuText.getText(message).display();
@@ -134,15 +142,27 @@ public abstract class Jeu {
         menuText.getText(message).clean();
         return input;
     }
+
+    
+    /** 
+     * Lis un entier entré par l'utilisateur avec un message affiché
+     * @param message
+     * @return String
+     */
     private String lireEntier(String message){
         String input="";
         menuText.getText(message).display();
-        // input = menuText.getText(message).lire(true);
         input = menuText.getText(message).lireNombre(true);
         menuText.getText(message).clean();
         return input;
     }
 
+    
+    /** 
+     * Recupère le niveau que l'utilisateur soubaire et s'assure que l'entrée est entre 1 et 5
+     * @return int
+     * @throws NumberFormatException
+     */
     private int getNiveau() throws NumberFormatException {
         int niveau=0;
         String message ="niveau";
@@ -156,56 +176,20 @@ public abstract class Jeu {
             catch (NumberFormatException e){
                 message="erreurNiveau";
                 success=false;
-            }
-            
-        // } while((niveau<1 || niveau >5) && !success);
+            }            
         } while(niveau<1 || niveau >5 || !success);
         return niveau;
     }
 
-    private int getIndex(int max) throws NumberFormatException{
-        int index=0;
-        String message ="index";
-        String input="";
-        Boolean success=false;
-        do{
-            try {
-                index=Integer.parseInt(lireTexte(message));
-                success=true;
-            }
-            catch (NumberFormatException e){
-                message="indexErreur";
-                success=false;
-            }
-            
-        // } while((niveau<1 || niveau >5) && !success);
-        } while(index<0 || index >max || !success);
-        return index;
+
+
     
-    }
-//a
-
-    public int affichePartiesOld(){
-
-        //alterntive si pas de place, pages ou naviguer entre partie
-        int nbParties = profil.getParties().size();
-        
-        for (Partie partie : profil.getParties()) {
-            //index * constante / taille
-            int index =profil.getParties().indexOf(partie);
-            menuText.addText(index+"."+partie.toString(), "partie"+index,200, 80+(index*200)/nbParties);
-            menuText.getText("partie"+index).display();
-        }
-
-        int choixPartie = getIndex(nbParties-1);
-
-        for (int i = 0; i < nbParties; i++) {
-            menuText.getText("partie"+i).clean();
-        }
-        return choixPartie;
-    }
+    /** 
+     *  Affichage des parties jouées par le profil, la méthode récupère l'ensemble des parties dans une liste
+     * et affiche un menu où l'utilisateur peut naviguer  d'une partie a l'autre
+     * @return int
+     */
     public int afficheParties(){
-        //alterntive si pas de place, pages ou naviguer entre partie
         ArrayList<Partie> alPartie= new ArrayList<Partie>();
         int nbParties = profil.getParties().size();
         
@@ -214,55 +198,71 @@ public abstract class Jeu {
             alPartie.add(partie);
         }
 
-        menuText.addText("(1.jouer 2.partie précedente 3.partie suivante 4.revenir","partieCtrl",100,200);
-        menuText.getText("partieCtrl").display();
-
         
         int index=0;
         boolean menu=true;
-        menuText.addText(alPartie.get(index).toString(), "partieChoix",100,300);
-        //index%nbPartie
-        int moduloIndex;
-        do{
-            moduloIndex=Math.floorMod(index, alPartie.size()); //le modulo en java donne des resultats negatif, cette fonction est plus adaptée
-            // moduloIndex=Math.abs(index%alPartie.size());
-            System.out.println("index: "+moduloIndex);
-            menuText.getText("partieChoix").modifyTextAndDisplay((moduloIndex+1)+"/"+alPartie.size()+alPartie.get(moduloIndex).toString()); //navigue entre les parti et affiche le l'index modulo le nombre de partie pour ne pas sortir de la liste
-            // menuText.getText("partieChoix").display();
+        int choixPartie;
+        if(!alPartie.isEmpty()){ //si il ya au moins une partie
+            menuText.addText("(1.jouer 2.partie précedente 3.partie suivante 4.revenir","partieCtrl",100,200);
+            menuText.getText("partieCtrl").display();
+            menuText.addText(alPartie.get(index).toString(), "partieChoix",100,300);
+            //index%nbPartie
+            int moduloIndex;
+            do{
+                moduloIndex=Math.floorMod(index, alPartie.size()); //le modulo en java donne des resultats negatif, cette fonction est plus adaptée
+                System.out.println("index: "+moduloIndex);
+                menuText.getText("partieChoix").modifyTextAndDisplay((moduloIndex+1)+"/"+alPartie.size()+alPartie.get(moduloIndex).toString()); //navigue entre les parti et affiche le l'index modulo le nombre de partie pour ne pas sortir de la liste
+                int touche=0;
+                while (!(touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 ||touche == Keyboard.KEY_3  ||touche == Keyboard.KEY_4)){// ||touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3 || touche == Keyboard.KEY_NUMPAD1 || touche ==  Keyboard.KEY_NUMPAD2 || touche ==  Keyboard.KEY_NUMPAD3)) {
+                    touche = env.getKey();
+                    env.advanceOneFrame();
+                }
+    
+                switch (touche) {
+                    case Keyboard.KEY_2:
+                        index--;
+                        break;
+                    case Keyboard.KEY_3: 
+                        index++;
+                        break;
+                    case Keyboard.KEY_1:
+                        menu=false;
+                        break;
+                    case Keyboard.KEY_4:
+                        moduloIndex=-1;
+                        menu=false;
+                        break;
+                }
+            }while(menu);
+            choixPartie = moduloIndex;
+            menuText.getText("partieChoix").clean();
+            menuText.getText("partieCtrl").clean();
+
+
+        }
+        else{
+            choixPartie=-1;
+            menuText.addText("pas de partie (vide) appuiez sur 1 pour revenir", "partieChoix",100,300);
+            menuText.getText("partieChoix").display();
             int touche=0;
-            while (!(touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 ||touche == Keyboard.KEY_3  ||touche == Keyboard.KEY_4)){// ||touche == Keyboard.KEY_1 || touche == Keyboard.KEY_2 || touche == Keyboard.KEY_3 || touche == Keyboard.KEY_NUMPAD1 || touche ==  Keyboard.KEY_NUMPAD2 || touche ==  Keyboard.KEY_NUMPAD3)) {
-                touche = env.getKey();
-                env.advanceOneFrame();
-            }
+            while (!(touche == Keyboard.KEY_1)){
+                    touche = env.getKey();
+                    env.advanceOneFrame();
+                }
+            menuText.getText("partieChoix").clean();
 
-            switch (touche) {
-                case Keyboard.KEY_2:
-                    index--;
-                    break;
-                case Keyboard.KEY_3: 
-                    index++;
-                    break;
-                case Keyboard.KEY_1:
-                    menu=false;
-                    break;
-                case Keyboard.KEY_4:
-                    moduloIndex=-1;
-                    menu=false;
-                    break;
-            }
-        }while(menu);
+        }
+        
 
-        int choixPartie = moduloIndex;
 
-        menuText.getText("partieChoix").clean();
-        menuText.getText("partieCtrl").clean();
         return choixPartie;
     }
     
-    public void hiScore(){
-
-    }
-    // fourni, à compléter
+    
+    /** 
+     * @return MENU_VAL
+     */
+    // fourni
     private MENU_VAL menuJeu() {
 
         MENU_VAL playTheGame;
@@ -304,19 +304,17 @@ public abstract class Jeu {
                 case Keyboard.KEY_1: // choisi un niveau et charge un mot depuis le dico
                     // .......... dico.******
                     initDico();
-                    int niveau = getNiveau();
-                    String mot = dico.getMotDepuisListeNiveaux(niveau);
+                    int niveau = getNiveau(); //on recupere le niveau sp4ouhaité
+                    String mot = dico.getMotDepuisListeNiveaux(niveau); //on choisi un mot au hasard avec le niveau récupéré
                     //FIN DICO 
 
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    LocalDate date = LocalDate.now();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");//on initalise un format de date
+                    LocalDate date = LocalDate.now(); //on recupere la date du jour
                     // crée un nouvelle partie
                     partie = new Partie(formatter.format(date), mot, niveau);
          
                     // joue
                     joue(partie);
-                    // enregistre la partie dans le profil --> enregistre le profil
-                    // .......... profil.******
                     profil.ajouterPartie(partie);
                     profil.sauvegarder("Data/xml/profils/"+profil.getNom()+".xml");
                     playTheGame = MENU_VAL.MENU_JOUE;
@@ -333,7 +331,7 @@ public abstract class Jeu {
                         // enregistre la partie dans le profil --> enregistre le profil
                         partie = profil.getParties().get(partieIndex);
                         joue(partie);
-                        // profil.ajouterPartie(partie);
+                        profil.ajouterPartie(partie);
                         profil.sauvegarder("Data/xml/profils/"+profil.getNom()+".xml");
                     }
                     playTheGame = MENU_VAL.MENU_JOUE;
@@ -356,6 +354,12 @@ public abstract class Jeu {
         return playTheGame;
     }
 
+    
+    /** 
+     * Pour que les chiffres du pavé numériques soient prise en compte
+     * @param touche
+     * @return int
+     */
     //Fonction pour prendre en compte le paver numerique
     private int checkNumpad(int touche){
         if(touche==Keyboard.KEY_NUMPAD1){
@@ -370,9 +374,21 @@ public abstract class Jeu {
         if(touche==Keyboard.KEY_NUMPAD4){
             touche=Keyboard.KEY_4;
         }
+        if(touche==Keyboard.KEY_NUMPAD5){
+            touche=Keyboard.KEY_5;
+        }
+        if(touche==Keyboard.KEY_NUMPAD6){
+            touche=Keyboard.KEY_6;
+        }
         return touche;
     }
 
+    
+    /** 
+     * Vérifie qu'un profil existe et charge le profil
+     * @param nom nom du profil
+     * @return boolean, vrai si profil existe
+     */
     private boolean loadProfil(String nom){
         boolean check=false;
         File fichierProfil = new File("Data/xml/profils/"+nom+".xml");
@@ -386,6 +402,12 @@ public abstract class Jeu {
         return check;
     }
 
+    
+    /** 
+     * Crée un profil si un profil n'existe pas
+     * @param nom nom du profil a créer
+     * @return boolean retourne vrai si profil n'existe pas
+     */
     private boolean checkProfil(String nom){
         boolean check=false;
         File fichierProfil = new File("Data/xml/profils/"+nom+".xml");
@@ -399,6 +421,12 @@ public abstract class Jeu {
         return check;
     }
 
+    
+    /** 
+     * Supprime un profil
+     * @param nom
+     * @return boolean
+     */
     private boolean deleteProfil(String nom){
         boolean check=false;
         File fichierProfil = new File("Data/xml/profils/"+nom+".xml");
@@ -412,6 +440,11 @@ public abstract class Jeu {
         return check;
     }
 
+     /** 
+     * demande a l'utilisateur de saisir un mot et un niveau, puis ajoute ce mot dans le dictionnaire 
+     * @param nom
+     * @return boolean
+     */
     private void menuAjout(){
         EditeurDico ed = new EditeurDico("Data/xml/dico.xml");
         String mot = lireTexte("ajoutMot"); //
@@ -422,6 +455,10 @@ public abstract class Jeu {
         ed.editer(mot, niveau);
         
     }
+    
+    /** 
+     * @return MENU_VAL
+     */
     private MENU_VAL menuPrincipal() {
 
         MENU_VAL choix = MENU_VAL.MENU_CONTINUE;
@@ -523,6 +560,11 @@ public abstract class Jeu {
         return choix;
     }
 
+    
+    /** 
+     * Affiche le mot a orthographier pendant 5 secondes avec le decompte du chrono 
+     * @param mot mot a afficher
+     */
     public void wordPeek(String mot){
         Chronomètre chronoPeek=new Chronomètre(5000);
         chronoPeek.start();
@@ -531,7 +573,7 @@ public abstract class Jeu {
         menuText.getText("peek").display();
         menuText.getText("chrono").display();
 
-        while(chronoPeek.remainsTime()){
+        while(chronoPeek.remainsTime()){//tant quil reste du temps, on avance d'une frame et met a jour le timer 
             env.advanceOneFrame();
             menuText.getText("chrono").modifyTextAndDisplay(chronoPeek.getRemaining()+" secondes");
         }
@@ -542,6 +584,10 @@ public abstract class Jeu {
         menuText.getText("chrono").destroy();
     }
 
+    /** 
+     *Attends que l'utilisateur appuie sur la touche demandé, la méthode est utilisée par l'ecran de fin de partie
+     * @param mot mot a afficher
+     */
     protected void waitInput(){
         int touche = 0;
         while (!(touche == Keyboard.KEY_1 || touche == Keyboard.KEY_NUMPAD1)){
@@ -550,14 +596,62 @@ public abstract class Jeu {
         }
     }
    
+     /** 
+     * Scan et gestion de collision lancé une fois par frame, chaque Lettre et comparé a la distance des autres lettres
+    */
+    public void collisionScan(){
+        for (Letter lettre : lettres) {
+            for (Letter lettre2 : lettres){
+                if(!lettre.equals(lettre2) && !lettre.getFound() && !lettre2.getFound()){//pas de collision si la lettre est trouvée
+
+                    double shortHitBox=7.0;
+                    boolean condX = lettre.getX()>lettre2.getX()-shortHitBox&& lettre.getX()<lettre2.getX()+shortHitBox;//condiiton qui verifie la distance
+                    boolean condY = lettre.getZ()>lettre2.getZ()-shortHitBox&& lettre.getZ()<lettre2.getZ()+shortHitBox;
+
+                    if(condX&&condY){
+                         /*les condition qui suivent
+                         calculent  la position relative des cubes pour pouvoir les positionner dans le bon sens
+                         */
+                         if(lettre.getX()>lettre2.getX()){ //calcul de la position relative des cubes pour pouvoir les positionner dans le bon sens
+                         
+                            lettre.deplace(1,0 );
+                            lettre2.deplace(-1,0);
+                        }
+                        else{
+                            
+                            lettre.deplace(-1,0 );
+                            lettre2.deplace(1,0 );
+                        }
+                        if(lettre.getZ()>lettre2.getZ()){
+                       
+    
+                            lettre.deplace(0,1 );
+                            lettre2.deplace(0,-1 );
+                        }
+                        else{
+                        
+
+                            lettre.deplace(0,-1 );
+                            lettre2.deplace(0,1 );
+                        }
+                    
+                    }
+                }
+            }
+        }
+    }
+    
+    /** 
+     * @param partie
+     */
     public void joue(Partie partie) {
 
         // Instancie un Tux
         tux = new Tux(env, mainRoom);
         env.addObject(tux);
 
-        montagne = new Mountain(env, mainRoom);
-        env.addObject(montagne);
+        //montagne = new Mountain(env, mainRoom);
+        //env.addObject(montagne);
         
         //affichage 5 sec
         wordPeek(partie.getMot());
@@ -574,51 +668,55 @@ public abstract class Jeu {
 
             // Contrôles des déplacements de Tux (gauche, droite, ...)
             tux.deplace(lettres);
-            animLetters();
-            collisionScan();
+
+            animLetters(); //animation idle des lettres
+            collisionScan(); //scan de collision des lettres
             // Ici, on applique les regles
             appliqueRegles(partie);
-            // appliqueRegles(partie);
-            finished=isFinished();
+
+            finished=isFinished();//récupre le flag de fin de partie
+
             // Contrôles globaux du jeu (sortie, ...)
             //1 is for escape key
-            if (env.getKey() == 1 ) {
+            if (env.getKey() == 1 ) { //on place cette condition après  isFinished, car si la partie n'est pas fini, le flag finished est remi a false
                 finished = true;
             }
             // Fait avancer le moteur de jeu (mise à jour de l'affichage, de l'écoute des événements clavier...)
             env.advanceOneFrame();
         }
 
-        // Ici on peut calculer des valeurs lorsque la partie est terminée
         terminePartie(partie);
-        // profil.ajouterPartie(partie);
-        // profil.sauvegarder("Data/xml/"+profil.getNom()+".xml");
+        
     }
 
-    protected abstract boolean isFinished(); //indique a Jeu que la partie est fini(fin du chrono ou lettres trouvées)
+    
 
-    protected abstract void démarrePartie(Partie partie);
-
-    protected abstract void appliqueRegles(Partie partie);
-
-    protected abstract void terminePartie(Partie partie);
-
+     /** 
+     * Initialisation du dictionnaire(parse dico.xml et cosntruit les listes de mot par niveau)
+     */
     private void initDico(){
         try {
-            // dico.lireDictionnaireDOM("Data/xml/profils/", "dico.xml");
             dico.lireDictionnaire("Data/xml/dico.xml");
         }
         catch(Exception e){
-            
+            System.out.println(e);
         }
-        // dico.ajouteMotADico(3, "Qotsa");
-        // dico.ajouteMotADico(3, "Mamoune");
+
     }
 
+    
+    /** 
+     * @return Env
+     */
     protected Env getEnv(){
         return env;
     }
 
+    
+    /** 
+     * @param lettre
+     * @return double
+     */
     private double distance(EnvNode lettre){
         double x = Math.pow(tux.getX()-lettre.getX(), 2);
         double y = Math.pow(tux.getX()-lettre.getX(), 2);
@@ -626,95 +724,34 @@ public abstract class Jeu {
 
     }
 
+    
+    /** 
+     * inutilisé, demandé dans l'énoncé, on utilise la méthode collisopnScan a la placz
+     * @param lettre
+     * @return boolean
+     */
     private boolean collision(Letter lettre){
         return distance(lettre)<3;
     }
+    
+    /** 
+     * inutilisé on utilise la méthode collisopnScan a la placz
+     * @param lettre 
+     * @return boolean
+     */
     private boolean nearCollision(Letter lettre){
         return distance(lettre)<7;
     }
 
-    Letter collide;
-    double slowSpeed;
-    boolean onTop=false;
-    public void letterCollisionScan(double x, double z, ArrayList<Letter> lettres){
-        for (Letter lettre : lettres) {
-            double shortHitBox=4.0;
-            double longHitBox =9.0;
-
-            boolean condXR = tux.getX()>lettre.getX()-longHitBox && tux.getX()<lettre.getX()+longHitBox;
-            boolean condYR = tux.getZ()>lettre.getZ()-longHitBox && tux.getZ()<lettre.getZ()+longHitBox; //condition pour rotation si on est loin mais assez proche
-
-            
-            if (nearCollision(lettre) && lettre.getScale()!=4){ //si on est proche mais loins
-                collide=lettre; //on garde en mémoire le bloc de collsision
-
-                slowSpeed=0.25;
-                
-                if(tux.getY()>=7 && !env.getKeyDown(Keyboard.KEY_SPACE)){ //essayer de debloquer le saut
-                    tux.setY(13);
-                    // setY(getScale() * 3.1);
-                    onTop=true;
-                }
-
-                else {
-                    if(env.getKeyDown(Keyboard.KEY_RCONTROL) || env.getKeyDown(Keyboard.KEY_LCONTROL)){ //si touche control tux ramasse la lettre
-                        tux.lift(lettre);
-                        slowSpeed=0.25;
-                    }
-                    else {
-                        lettre.setY(tux.getScale() * 1.1); //si tux ne porte pas un bloc, le bloc revient a sa hauteur initiale
-                        // slowSpeed=0.0;
-                    }
-                    
-                    if (collision(lettre)) { //si on est proche
-                        slowSpeed=1.5; //coefficient qui ralenti Tux lorsqu'il pousse un bloc
-                        tux.testeRoomCollision(lettre,  x, z);
-                        lettre.deplace(x, z);
-                    
-                    }
-                    else { //loin
-                        // slowSpeed=0.0; //on reset la vitesse de Tux
-                        if(tux.getX()>lettre.getX()){ //calcul du bon sens de la rotztion
-                            lettre.setRotateY(lettre.getRotateY()-(z*2));
-                            lettre.setX(lettre.getX()-0.02);
-                        }
-                        else{
-                            lettre.setRotateY(lettre.getRotateY()+(z*2));
-                            lettre.setX(lettre.getX()+0.02);
-    
-                        }
-                        if(tux.getZ()>lettre.getZ()){
-                            lettre.setRotateY(lettre.getRotateY()+(x*2));
-                            lettre.setZ(lettre.getZ()-0.02);
-    
-                        }
-                        else{
-                            lettre.setRotateY(lettre.getRotateY()-(x*2));
-                            lettre.setZ(lettre.getZ()+0.02);
-                        }
-                    }
-                }
-                
-            }
-
-            else { //parce qu'on boucle les autres bloc le desactive a chaque fois
-               
-                if(onTop && lettre.equals(collide)){ //si on quitte le bloc sur lequel on est monté on revient a notre hauteur initiale
-                    // System.out.println("collide exit");
-                    tux.setY(tux.getScale() * 1.1);
-                    onTop=false;
-                  }
-                if(lettre.equals(collide)){
-                    slowSpeed=0.0;
-
-                }
-
-            }
-            // slowSpeed=0.0;
-
-        }
-    }
   
+    
+    /** 
+     * Génère un entier entre min et max
+     * @param min
+     * @param max
+     * @return int
+     * @author "mkyong" https://mkyong.com/java/java-generate-random-integers-in-a-range/
+     */
     private static int randomInRange(int min, int max) {
         //géneration d'entier aléatoir, author: mkyon https://mkyong.com
 		if (min >= max) {
@@ -724,6 +761,11 @@ public abstract class Jeu {
 		return r.nextInt((max - min) + 1) + min;
 	}
          
+    
+    /** 
+     * Place les lettres (instance de Letter) sdans l'environement, le positionnement est aléatoie
+     * @param mot mot de la partie
+     */
     public void spawnLetters(String mot){
         int x,y;
         for(int i =0; i<mot.length(); i++){
@@ -741,6 +783,10 @@ public abstract class Jeu {
             env.addObject(letter);
         }
     }
+
+    /** 
+     * Enlève les instances Letter de l'environement
+    */
     public void removeLetters(){
         for (Letter letter: lettres){
             env.removeObject(letter);
@@ -748,6 +794,10 @@ public abstract class Jeu {
         lettres = new ArrayList<Letter>();
     }
     
+  
+    /** 
+     * Appele la methode d'animation idle pour toutes les instances de Letter
+    */  
     public void animLetters(){
         
         for (Letter letter : lettres) {
@@ -755,48 +805,29 @@ public abstract class Jeu {
         }
     }
 
-    public void collisionScan(){
-        //une fois par frame, chaque lettre copare sa position avec les autres lettres et bouge en consequence
-        for (Letter lettre : lettres) {
-            for (Letter lettre2 : lettres){
-                if(!lettre.equals(lettre2) && !lettre.found && !lettre2.found){
+    /** 
+     * @param initDico(
+     * @return boolean
+     */
+    protected abstract boolean isFinished(); //indique a Jeu que la partie est fini(fin du chrono ou lettres trouvées)
 
-                    double shortHitBox=7.0;
-                    boolean condX = lettre.getX()>lettre2.getX()-shortHitBox&& lettre.getX()<lettre2.getX()+shortHitBox;
-                    boolean condY = lettre.getZ()>lettre2.getZ()-shortHitBox&& lettre.getZ()<lettre2.getZ()+shortHitBox;
-
-                    if(condX&&condY){
-                         if(lettre.getX()>lettre2.getX()){ //calcul du bon sens de la rotztion
-                            // lettre.setX(lettre.getX()+1);
-                            // lettre2.setX(lettre2.getX()-1);
-                            lettre.deplace(1,0 );
-                            lettre2.deplace(-1,0);
-                        }
-                        else{
-                            // lettre.setX(lettre.getX()-1);
-                            // lettre2.setX(lettre2.getX()+1);
-                            lettre.deplace(-1,0 );
-                            lettre2.deplace(1,0 );
-                        }
-                        if(lettre.getZ()>lettre2.getZ()){
-                            // lettre.setZ(lettre.getZ()+1);
-                            // lettre2.setZ(lettre2.getZ()-1);
     
-                            lettre.deplace(0,1 );
-                            lettre2.deplace(0,-1 );
-                        }
-                        else{
-                            // lettre.setZ(lettre.getZ()-1);
-                            // lettre2.setZ(lettre2.getZ()+1);
+    /** 
+     * @param initDico(
+     */
+    protected abstract void démarrePartie(Partie partie);
 
-                            lettre.deplace(0,-1 );
-                            lettre2.deplace(0,1 );
-                        }
-                    
-                    }
-                }
-            }
-        }
-    }
+    
+    /** 
+     * @param initDico(
+     */
+    protected abstract void appliqueRegles(Partie partie);
+
+    
+    /** 
+     * @param initDico(
+     */
+    protected abstract void terminePartie(Partie partie);
+
 
 }

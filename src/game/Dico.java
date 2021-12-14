@@ -29,13 +29,16 @@ public class Dico extends DefaultHandler{
     private ArrayList<String> listeNiveau4;
     private ArrayList<String> listeNiveau5;
 
-    private ArrayList<ArrayList<String>> liste;
+    private ArrayList<ArrayList<String>> liste; //ArrayList qui contient les listes par niveau, on peut donc facilement accéder a une liste d'un certain niveau avec l'indice
 
     private String cheminFichierDico;
 
-    private StringBuffer buffer;
-
+    private String currentMot; //tampon une fois le mot construit
+    private int currentNiveau; //tampon niveau
+    private boolean inMot; //flag pour avoir qu'on est dans l'élément
+    private StringBuilder currentValue;//tampon pour construire le mot
     public Dico(String cheminFichierDico){
+
         super();
         this.cheminFichierDico=cheminFichierDico;
         
@@ -53,22 +56,25 @@ public class Dico extends DefaultHandler{
         liste.add(listeNiveau4);
         liste.add(listeNiveau5);
 
+        currentValue=new StringBuilder();
         
     }
 
-    private String currentMot;
-    private int currentNiveau;
-    boolean inMot;
-    private StringBuilder currentValue = new StringBuilder();
+    
 
+    
+    /** 
+     * Evenement début d'un élement: on reinitialise le buffer currentValue, et on recupere l'attribut niveau
+     * @param uri
+     * @param localName
+     * @param qName
+     * @param attributes
+     * @throws SAXException
+     */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         currentValue.setLength(0);
-        // if(qName.equals("dictionnaire")){
-        //     // currentMot=
-        // }
         if(qName.equals("mot")){
-            // currentValue =new StringBuilder();
             currentMot = new String();
             inMot=true;
             int niveau=Integer.parseInt(attributes.getValue("niveau"));
@@ -77,6 +83,15 @@ public class Dico extends DefaultHandler{
 
     }
     
+    
+    /** 
+     * Evenement fin d'un élement: on ajoute le mot construit dans le buffer currentValue ainsi que le niveau en appelant dans
+     * en appelant la méthode ajouteMotADico
+     * @param uri
+     * @param localName
+     * @param qName
+     * @throws SAXException
+     */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if(qName.equals("mot")){
@@ -87,6 +102,14 @@ public class Dico extends DefaultHandler{
             inMot=false;
         }
     }
+    
+    /** 
+     * Construction du mot, on concatene le caractère au tampon
+     * @param ch
+     * @param start
+     * @param length
+     * @throws SAXException
+     */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         // String lecture = new String(ch, start, length);
@@ -95,17 +118,31 @@ public class Dico extends DefaultHandler{
         }
         
     }
+    
+    /** 
+     * @throws SAXException
+     */
     @Override
     public void startDocument() throws SAXException {
         System.out.println("startDocument()");
     }
 
+    
+    /** 
+     * @throws SAXException
+     */
     @Override
     public void endDocument() throws SAXException {
         System.out.println("endDocument()");
 
     } 
 
+    
+    /** 
+     * Appel du parser SAX
+     * @param filename
+     * @throws SAXException
+     */
     public void lireDictionnaire(String filename) throws SAXException{
         try{
             SAXParserFactory fabrique = SAXParserFactory.newInstance();
@@ -120,21 +157,61 @@ public class Dico extends DefaultHandler{
         
     }
 
+
+    /** 
+     * Pioche un mot depuis la liste en paramètre
+     * @param list une des 5 listes par niveau
+     * @return String retourne le mot pioché
+     */
+    private String getMotDepuisListe(ArrayList<String> list){
+        //mot aléatoire
+        int indexMax=list.size()-1; 
+        String mot ="vide";
+        if(indexMax==0 && !list.isEmpty()){
+            mot = list.get(0);
+        }
+        else if(!list.isEmpty()){
+            mot = list.get(randomInRange(0, indexMax));
+        }
+        return mot;
+    }
+    
+    /** 
+     * Appel getMotDepuisListe avec la liste qui correspond au niveau
+     * @param niveau niveau du mot
+     * @return String retourne un mot au hasard avec le bon niveau
+     */
     public String getMotDepuisListeNiveaux(int niveau){
 
         //pioche dans la liste des liste avec l'index retournée par vérifie niveau
         return getMotDepuisListe(liste.get(vérifieNiveau(niveau)));
     }
 
+    
+    /** 
+     * Vérifie que le niveau existe (appel a vérifieNiveau) puis ajoute le mot a la bonne liste
+     * @param niveau
+     * @param mot
+     */
     public void ajouteMotADico(int niveau, String mot){
         int index = vérifieNiveau(niveau);
         liste.get(index).add(mot);
     }
 
+    
+    /** 
+     * @return String
+     */
     public String getCheminFichierDico(){
         return cheminFichierDico;
     }
 
+    
+    /** 
+     * Encapsulation, vérifie que le niveau appelé existe et le retourne (sinon retourne 1)
+     * @param niveau eniter a verifier
+     * @return int niveau
+     */
     private int vérifieNiveau(int niveau){
         //retourne l'index pour la liste de liste correpondant au bon niveau
         int index=0;
@@ -148,42 +225,32 @@ public class Dico extends DefaultHandler{
         return index;
     }
 
-    private String getMotDepuisListe(ArrayList<String> list){
-        //mot aléatoire
-        int indexMax=list.size()-1;
-        String mot ="vide";
-        if(indexMax==0 && !list.isEmpty()){
-            mot = list.get(0);
-        }
-        else if(!list.isEmpty()){
-            mot = list.get(randomInRange(0, indexMax));
-        }
-        return mot;
-    }
+    
 
-    public void lireDictionnaireDOM(String path, String filename)  throws ParserConfigurationException, SAXException {
-        // DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        // DocumentBuilder db = dbf.newDocumentBuilder();
-        //   Document doc = db.parse(new File(FILENAME));
-        // Document document = db.parse(new File(path+filename));
+
+    
+    /** 
+     * lecture DOM du dictionnaire, recuperation des mots et niveau a partir du Document 
+     * @param cheminRep chemin du repertoire 
+     * @param nomFichier nom du fichier
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     */
+    public void lireDictionnaireDOM(String cheminRep, String nomFichier)  throws ParserConfigurationException, SAXException {
+
         try {
-            File file = new File(path+filename);
+            File file = new File(cheminRep+nomFichier);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document document = db.parse(file);
             document.getDocumentElement().normalize();
-            System.out.println("Root Element :" + document.getDocumentElement().getNodeName());
-            NodeList nList = document.getElementsByTagName("mot");
-            System.out.println("----------------------------");
-            for (int temp = 0; temp < nList.getLength(); temp++) {
-                Node nNode = nList.item(temp);
-                System.out.println("\nCurrent Element :" + nNode.getNodeName());
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element eElement = (Element) nNode;
-                    System.out.println("Mot: " + eElement.getTextContent());
-                    String mot =eElement.getTextContent();
-                    System.out.println("Difficulté : " + eElement.getAttribute("niveau"));
-                    String diff = eElement.getAttribute("niveau");
+            NodeList nodeListeMots = document.getElementsByTagName("mot");
+            for (int temp = 0; temp < nodeListeMots.getLength(); temp++) {
+                Node nodeMot = nodeListeMots.item(temp);
+                if (nodeMot.getNodeType() == Node.ELEMENT_NODE) {
+                    Element motElt = (Element) nodeMot;
+                    String mot =motElt.getTextContent();
+                    String diff = motElt.getAttribute("niveau");
                     int dif = Integer.parseInt(diff);
                     ajouteMotADico(dif, mot);
                 }
@@ -194,8 +261,15 @@ public class Dico extends DefaultHandler{
         } 
     }
 
+    
+    /** 
+     * géneration d'entier aléatoir entre min et max
+     * @param min
+     * @param max
+     * @return int
+     * @author  mkyon https://mkyong.com
+     */
     private static int randomInRange(int min, int max) {
-        //géneration d'entier aléatoir, author: mkyon https://mkyong.com
 		if (min >= max) {
 			throw new IllegalArgumentException("max > min");
 		}

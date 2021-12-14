@@ -26,6 +26,7 @@ public class Profil {
     public Profil() {
     }
 
+    //le premier constructeur créer un nouveau profil et un nouveau fichier xml a partir du nom et la date
     public Profil(String nom,String dateNaissance){
         // _doc = new Document();
         this.nom=nom;
@@ -33,14 +34,48 @@ public class Profil {
         this.avatar="";
         parties = new ArrayList<Partie>();
 
-        
-
-        
-       createXmlProfil();
+        createXmlProfil(); 
         
         //creere nouveau profil xml
     }
 
+
+    /** 
+    * Constructeur pour charger un profil a partir de son ficheir xml
+    */
+    public Profil(String nomFichier) {
+       
+         _doc = fromXML(nomFichier);
+
+        //racine
+        Element profilElt = _doc.getDocumentElement();
+
+        //recuperation des attributs
+        String nom=profilElt.getElementsByTagName("nom").item(0).getTextContent();
+        String avatar=profilElt.getElementsByTagName("avatar").item(0).getTextContent();
+        String dateNaissanceXML=profilElt.getElementsByTagName("anniversaire").item(0).getTextContent();
+
+        this.nom=nom;
+        this.avatar=avatar;
+        this.dateNaissance=xmlDateToProfileDate(dateNaissanceXML); //on convertie la date au bon format
+
+        System.out.println("Initialisation profil: nom="+nom+" avatar="+avatar+" date="+dateNaissance);
+
+        parties= new ArrayList<Partie>();
+        NodeList partieList = profilElt.getElementsByTagName("partie");
+        for (int i = 0; i < partieList.getLength(); i++) { //on parcours la liste des parties
+            Element partieElt =(Element) partieList.item(i); //on recupere l'element de la partie
+            Partie partie = new Partie(partieElt);
+            parties.add(partie);
+            System.out.println("Partie initialisée: "+partie);
+        }
+
+    }
+
+        /** 
+     * Crée un nouveau Document et le cnstruit a partir des attribut de l'instance, puis sauvegarde 
+     * le profil dans un nouveau ficheir xml
+    */
     private void createXmlProfil(){
         try{
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -83,49 +118,28 @@ public class Profil {
             System.out.println("Erreur creation profil: "+e);
         }
     }
- // Cree un DOM à partir d'un fichier XML
-//     public Profil(String nomFichier) {
-//     //TMP
-//      this.nom="mamoune";
-//      this.dateNaissance="04-10-1998";
-//  }
-    public Profil(String nomFichier) {
-       
-         _doc = fromXML(nomFichier);
 
-        //racine
-        Element profilElt = _doc.getDocumentElement();
-
-        //recuperation des attributs
-        String nom=profilElt.getElementsByTagName("nom").item(0).getTextContent();
-        String avatar=profilElt.getElementsByTagName("avatar").item(0).getTextContent();
-        String dateNaissanceXML=profilElt.getElementsByTagName("anniversaire").item(0).getTextContent();
-
-        this.nom=nom;
-        this.avatar=avatar;
-        this.dateNaissance=xmlDateToProfileDate(dateNaissanceXML); //on convertie la date au bon format
-
-        System.out.println("Initialisation profil: nom="+nom+" avatar="+avatar+" date="+dateNaissance);
-
-        parties= new ArrayList<Partie>();
-        NodeList partieList = profilElt.getElementsByTagName("partie");
-        for (int i = 0; i < partieList.getLength(); i++) { //on parcours la liste des parties
-            Element partieElt =(Element) partieList.item(i); //on recupere l'element de la partie
-            Partie partie = new Partie(partieElt);
-            parties.add(partie);
-            System.out.println("Partie initialisée: "+partie);
-        }
-
-    }
-
+   
+   /** 
+    * @return String
+    */
    public String getNom(){
        return this.nom;
    }
 
+    
+    /** 
+     * @return ArrayList<Partie>
+     */
     public ArrayList<Partie> getParties(){
         return parties;
     }
 
+    
+    /** 
+     * Ajoute la partie a la liste des parties puis ajoute un élement DOM au document principal
+     * @param p partie a ajouter
+     */
     public void ajouterPartie(Partie p){
         parties.add(p);
         Element partieElt=p.getPartie(_doc);
@@ -133,13 +147,21 @@ public class Profil {
         partiesElt.appendChild(partieElt);
     }
     
+    
+    /** 
+     * @param filename fichier de sauvegarde
+     */
     public void sauvegarder(String filename){
-        // System.out.println("Sauvegarde dans"+filename);
         toXML(filename);
     }
    
 
-    // Cree un DOM à partir d'un fichier XML
+    
+    /** 
+     *   Cree un DOM à partir d'un fichier XML
+     * @param nomFichier
+     * @return Document
+     */
     public Document fromXML(String nomFichier) {
         try {
             return XMLUtil.DocumentFactory.fromFile(nomFichier);
@@ -149,7 +171,11 @@ public class Profil {
          return null;
     }
 
-    // Sauvegarde un DOM en XML
+    
+    /** 
+     * Sauvegarde un DOM en XML
+     * @param nomFichier
+     */
     public void toXML(String nomFichier) {
         try {
             // XMLUtil.DocumentTransform.writeDoc(_doc, nomFichier);
@@ -159,8 +185,14 @@ public class Profil {
         }
     }
 
-    /// Takes a date in XML format (i.e. ????-??-??) and returns a date
-    /// in profile format: dd/mm/yyyy
+    
+    /** 
+     *  Takes a date in XML format (i.e. ????-??-??) and returns a date
+     * in profile format: dd/mm/yyyy
+     * @param xmlDate
+     * @return String
+     */
+ 
     public static String xmlDateToProfileDate(String xmlDate) {
         String date;
         // récupérer le jour
@@ -175,8 +207,14 @@ public class Profil {
         return date;
     }
 
-    /// Takes a date in profile format: dd/mm/yyyy and returns a date
-    /// in XML format (i.e. ????-??-??)
+    
+    /** 
+     * Takes a date in profile format: dd/mm/yyyy and returns a date
+     * in XML format (i.e. ????-??-??)
+     * @param profileDate
+     * @return String
+     */
+    
     public static String profileDateToXmlDate(String profileDate) {
         String date;
         // Récupérer l'année

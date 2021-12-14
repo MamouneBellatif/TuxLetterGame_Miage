@@ -22,6 +22,7 @@ public class Room {
 
    
 
+    //parsing DOM du plateau
     public Room() {
         try{
             Document _doc=XMLUtil.DocumentFactory.fromFile("Data/xml/plateau.xml");
@@ -39,13 +40,6 @@ public class Room {
             Logger.getLogger(Profil.class.getName()).log(Level.SEVERE, null, e);
         }
         // _doc=fromXML("Data/xml/plateau.xml");
-        
-       
-
-
-        
-        
-        
         
     }
     

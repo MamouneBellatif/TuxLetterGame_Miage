@@ -42,34 +42,37 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Classement {
-    private Document doc_score;
-    private Document _doc;
-    private ArrayList<Partie> partieAl;
-    private File[] listeFichier;
+    private Document doc_score; //Document DOM pour le classement
+    private Document _doc; //Document dom tampon pour chaque profil parsé
+    private ArrayList<Partie> partieAl; //liste de toutes les parties tout joueur confondu
+    private File[] listeFichier; //lste des fichiers xml de profil
 
     public Classement(){
         partieAl = new ArrayList<Partie>();
 
         // Directory where the files are located
         
-        parseProfils();
-        for (Partie partie : partieAl) {
-           System.out.println("nom :"+partie.getNom()+" "+partie.toString());
-           System.out.println(partie.getNiveau()*100/partie.getTemps());
-        }
+        parseProfils(); //on parse les profils et rempli la liste de partie
         
-        Collections.sort(partieAl);
+        Collections.sort(partieAl); //opon trie les partie (Partie est Comparable)
+
         System.out.println("TOP 10:");
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) { //console log
             System.out.println(i+". nom :"+partieAl.get(i).getNom()+" "+partieAl.get(i).toString());
             System.out.println(partieAl.get(i).getNiveau()*100/partieAl.get(i).getTemps());
         }
-        newXML();
+        newXML(); //géneration du fichier xml
     }
     
-	public static void convertXMLToHTML(Source xml, Source xslt) {
+	
+    /** 
+     * Génère un document HTML du classement  a partir de la feuille de transformation et du xml de l'instance
+     * @param xml classement top10 xml
+     * @param xslt feuille de transformation
+     * @author VK http://javaonlineguide.net/2016/02/convert-xml-to-html-in-java-using-xslt-example.html
+     */
+    public static void convertXMLToHTML(Source xml, Source xslt) {
 		StringWriter sw = new StringWriter();
-
 		try {
 
 			FileWriter fw = new FileWriter("Data/xml/score.html");
@@ -92,23 +95,27 @@ public class Classement {
 		
 	}
 
+    /** 
+     * Création de deux instances Source pour les fichier xml et html puis fait appelle a la methode pour génerer le fuchuer html
+     */
     public void toHTML(){
         Source xml = new StreamSource(new File("Data/xml/score.xml"));
 		Source xslt = new StreamSource("Data/xml/xslt/score.xsl");
 
 		convertXMLToHTML(xml, xslt);
 
-        // try{
-        //     Document doc_html=XMLUtil.DocumentFactory.fromXSLTransformation("Data/xml/xslt/score.xsl", doc_score);
-        //     // XMLUtil.DocumentFactory.fromXSLTransformation("Data/xml/xslt/score.xsl", doc_score);
-        //     XMLUtil.DocumentTransform.writeDoc2(doc_html, "Data/xml/html/score.html");
-        // }catch(Exception e){
-        //     System.out.println("to hmtl"+e);
-        // }
     }
+
+    /** 
+     * Ouverture d'un navigateur web et affichage du classemebt
+     */
     public void affiche(){
         BrowserUtil.launch("Data/xml/score.html");
     }
+
+    /** 
+     * Génère un fichier XML du classement  a partir des 10 premières instances de Partie dans l'ArrayList triée
+     */
     public void newXML(){
         try{
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -144,8 +151,7 @@ public class Classement {
                 partieElt.setAttribute("position", String.valueOf(i+1));
 
                 scoreElt.appendChild(partieElt);
-                // System.out.println(i+". nom :"+partieAl.get(i).getNom()+" "+partieAl.get(i).toString());
-                // System.out.println(partieAl.get(i).getNiveau()*100/partieAl.get(i).getTemps());
+
             }
             toXML("Data/xml/score.xml");
         }
@@ -154,7 +160,9 @@ public class Classement {
         }
     }
 
-
+    /**
+     * Instancie les parties de chaque profil avec un parsing DOM et les ajoute a l'ArrayList (non triée)
+     */
     public void parseProfils(){
             File folder = new File("Data/xml/profils");
             File[] listeFichier = folder.listFiles();
@@ -179,6 +187,11 @@ public class Classement {
     }
     
 
+    
+    /** 
+     * @param nomFichier
+     * @return Document
+     */
     public Document fromXML(String nomFichier) {
         try {
             return XMLUtil.DocumentFactory.fromFile(nomFichier);
@@ -188,6 +201,11 @@ public class Classement {
          return null;
     }
 
+    
+    /** 
+     * @param nomFichier
+     * @author writeDoc2
+     */
     public void toXML(String nomFichier) {
         try {
             // XMLUtil.DocumentTransform.writeDoc(_doc, nomFichier);

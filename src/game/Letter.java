@@ -9,12 +9,12 @@ import env3d.advanced.EnvNode;
 public class Letter extends EnvNode{
     
     private char letter;
-//calucler vecteru de mouvement a chaque deplacement
+    
+    private int frame;//image clé d'aniation pour idle()
+    private boolean found;//flag d'une lettre trouvée
 
-    private double vecX; //vecteur de mouvement
-    private double vecZ; //vecteur de mouvement
+    public Letter(char l, double x, double y){  
 
-    public Letter(char l, double x, double y){        
         letter=Character.toLowerCase(l);
         setScale(4.0);
         setX(x);
@@ -23,24 +23,25 @@ public class Letter extends EnvNode{
         setTexture("models/letter/"+letter+".png");
         setModel("models/letter/cube.obj");
 
-        vecX=0;
-        vecZ=0;
+        frame=0;
+        found=false;
     }
 
+    
+    /** 
+     * @return char
+     */
     public char getLetter(){
         return letter;
     }
 
-    
-    
-    
-    
-    // anime les lettres
-    //On compte jusqua 20, entre 0 et 10 le mot monte,entre 10 et 20 il déscend et on recommence
-    int frame =0;
-    boolean found=false;
+
+    /** 
+     * Animation lettres: la lettre monte sur le plan vertical pour 15 frames et redescent pour 15 frame en boucle
+     * @param x distance x a deplacer
+     * @param z distance y a deplacer
+     */
     public void idle(){
-        // System.out.println(frame);
         if(!found){
             if (frame<15){
                 setY(getY()+0.1);
@@ -53,36 +54,27 @@ public class Letter extends EnvNode{
                 frame=0;
             }
         }
-       
     }
 
-    // public void deplace(double x, double z, ArrayList<Letter> lettres){
-        public void deplace(double x, double z){
-
+    
+    /** 
+     * Déplace une lettre d'une distance x et z
+     * @param x distance x a deplacer
+     * @param z distance y a deplacer
+     */
+    public void deplace(double x, double z){
         setX(getX()+x);
         setZ(getZ()+z);
-        vecX=x;
-        vecZ=z;
-        
-        // collisionInterLettre(x, z, lettres);
+
     }
 
-    public void collisionInterLettre(double x, double z, ArrayList<Letter> lettres){
-        for (Letter lettre2 : lettres) {
-            if (!lettre2.equals(this)){
-            boolean condX = getX()>lettre2.getX()-7 && getX()<lettre2.getX()+7;
-            boolean condY = getZ()>lettre2.getZ()-7 && getZ()<lettre2.getZ()+7;
-
-            boolean condXR = getX()>lettre2.getX()-10 && getX()<lettre2.getX()+10;
-            boolean condYR = getZ()>lettre2.getZ()-10 && getZ()<lettre2.getZ()+10; //condition pour rotation
-
-                if (condX && condY) {
-                    // lettre2.deplace(x, z, lettres);
-                    lettre2.setX(lettre2.getX()+x);
-                    lettre2.setZ(lettre2.getZ()+z);  
-                    // collisionInterLettre(lettre2, x, z, lettres);    //corriger stack oberflow     
-                }
-            }
-        }
+    public void setFound(boolean found){
+        this.found=found;
     }
+
+    public boolean getFound(){
+        return found;
+    }
+    
+ 
 }
